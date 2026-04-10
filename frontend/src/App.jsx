@@ -1,15 +1,24 @@
 import { useState, useEffect } from 'react'
-import MainLayout from './layouts/MainLayout'
 import Sidebar from './layouts/Sidebar'
 import Overview from './screens/Overview'
 import Agents from './screens/Agents'
 import Budget from './screens/Budget'
 import Report from './screens/Report'
 import Onboarding from './screens/Onboarding'
+import Signup from './pages/Signup'
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('overview')
   const [isProxyActive, setIsProxyActive] = useState(false)
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname)
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
 
   useEffect(() => {
     const checkProxy = async () => {
@@ -34,6 +43,11 @@ export default function App() {
   }
 
   const CurrentScreen = screens[currentScreen] || Overview
+
+  // Show signup page if on /signup route
+  if (currentPath === '/signup') {
+    return <Signup onSuccess={() => window.location.href = '/'} />
+  }
 
   return (
     <div style={{ display: 'flex' }}>
