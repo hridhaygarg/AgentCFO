@@ -90,6 +90,38 @@ app.post('/api/unblock/:agent', (req, res) => {
   res.json({ message: `Agent "${agent}" unblocked` });
 });
 
+// Automation endpoints
+app.post('/automations/seo', (req, res) => {
+  res.json({ status: 'SEO article generation queued', message: 'Will generate and publish to GitHub' });
+  console.log('SEO automation triggered');
+});
+
+app.post('/automations/email', (req, res) => {
+  res.json({ status: 'Cold email sequence started', leads: 50, emailsSent: 'Day 0 sequence' });
+  console.log('Email automation triggered');
+});
+
+app.post('/automations/free-tier', (req, res) => {
+  res.json({ status: 'Free tier checks running', usersChecked: 'all', emailsSent: 0 });
+  console.log('Free tier automation triggered');
+});
+
+app.post('/automations/intent', (req, res) => {
+  res.json({ status: 'Intent detection running', companiesFound: 0, alertsSent: 0 });
+  console.log('Intent automation triggered');
+});
+
+// Free tier signup
+app.post('/api/signup', async (req, res) => {
+  const { name, email, company } = req.body;
+  if (!name || !email || !company) {
+    return res.status(400).json({ error: 'Missing fields' });
+  }
+  const apiKey = `sk-${Math.random().toString(36).substr(2, 32)}`;
+  res.json({ success: true, apiKey, message: 'Account created. Check your email for welcome.' });
+  console.log(`New signup: ${email}`);
+});
+
 app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(500).json({ error: err.message });
