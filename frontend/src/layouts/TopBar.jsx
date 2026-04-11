@@ -21,7 +21,7 @@ export default function TopBar({ isActive }) {
       top: 0,
       zIndex: 50,
     }}>
-      <h1 style={{ fontFamily: theme.fonts.serif, fontSize: '20px' }}>AgentCFO</h1>
+      <h1 style={{ fontFamily: theme.fonts.serif, fontSize: '20px' }}>Layer ROI</h1>
       <span style={{ fontFamily: theme.fonts.mono, fontSize: '12px', color: theme.colors.text.secondary }}>
         {startOfWeek.toLocaleDateString()} — {endOfWeek.toLocaleDateString()}
       </span>

@@ -42,16 +42,16 @@ export async function sendColdEmailSequence() {
 
     // Email 1: Initial outreach
     await resend.emails.send({
-      from: 'sales@agentcfo.com',
+      from: 'sales@layerROI.com',
       to: email,
       subject: `Do you know which of your AI agents are profitable?`,
       html: `
         <p>Hi ${person.first_name},</p>
         <p>Quick question: do you know which of your AI agents have positive ROI and which are burning money silently?</p>
         <p>Most engineering leaders I talk to can answer their total LLM spend roughly. Almost none can tell me, with confidence, which specific agents are profitable.</p>
-        <p>We built AgentCFO to solve this — 15-minute setup, then you have a live P&L for every agent your team is running. No infrastructure changes.</p>
-        <p><a href="https://agent-cfo-six.vercel.app">See it here</a>. Worth 20 minutes to show you the live version?</p>
-        <p>Best,<br/>AgentCFO Team</p>
+        <p>We built Layer ROI to solve this — 15-minute setup, then you have a live P&L for every agent your team is running. No infrastructure changes.</p>
+        <p><a href="https://layeroi.com">See it here</a>. Worth 20 minutes to show you the live version?</p>
+        <p>Best,<br/>Layer ROI Team</p>
       `,
     });
 
@@ -74,7 +74,7 @@ export async function checkClicksAndAlert() {
 
   for (const lead of hotLeads) {
     await axios.post(process.env.SLACK_WEBHOOK_URL, {
-      text: `🔥 Hot lead: ${lead.firstName} ${lead.lastName} at ${lead.company} clicked the AgentCFO link`,
+      text: `🔥 Hot lead: ${lead.firstName} ${lead.lastName} at ${lead.company} clicked the Layer ROI link`,
     });
   }
 }

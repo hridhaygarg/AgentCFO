@@ -37,7 +37,7 @@ export default function Report() {
         maxWidth: '800px',
         margin: '0 auto',
       }}>
-        <h1 style={{ fontFamily: theme.fonts.serif, fontSize: '28px', marginBottom: '8px' }}>AgentCFO Weekly Report</h1>
+        <h1 style={{ fontFamily: theme.fonts.serif, fontSize: '28px', marginBottom: '8px' }}>Layer ROI Weekly Report</h1>
         <p style={{ color: '#666', marginBottom: '24px' }}>Week of April 7-13, 2026</p>
 
         <h2 style={{ fontFamily: theme.fonts.serif, fontSize: '16px', marginTop: '20px', marginBottom: '12px' }}>Executive Summary</h2>

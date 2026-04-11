@@ -32,10 +32,10 @@ Include:
 - Engaging introduction (2-3 sentences)
 - 4-5 sections with subheadings
 - Real data points and examples
-- Conclusion with CTA to try AgentCFO
+- Conclusion with CTA to try Layer ROI
 
 Format as HTML. Include these CTA elements:
-<p>Ready to optimize your AI agent spending? <a href="https://agent-cfo-six.vercel.app">Try AgentCFO free</a> — 15 minutes to financial visibility.</p>
+<p>Ready to optimize your AI agent spending? <a href="https://layeroi.com">Try Layer ROI free</a> — 15 minutes to financial visibility.</p>
 
 Return ONLY the HTML content, no markdown or extra text.`;
 
@@ -61,10 +61,10 @@ Return ONLY the HTML content, no markdown or extra text.`;
 <!DOCTYPE html>
 <html>
 <head>
-  <title>${title} | AgentCFO</title>
-  <meta name="description" content="Learn about ${title.toLowerCase()} with AgentCFO's expert guide.">
+  <title>${title} | Layer ROI</title>
+  <meta name="description" content="Learn about ${title.toLowerCase()} with Layer ROI's expert guide.">
   <meta property="og:title" content="${title}">
-  <meta property="og:description" content="Learn about ${title.toLowerCase()} with AgentCFO.">
+  <meta property="og:description" content="Learn about ${title.toLowerCase()} with Layer ROI.">
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
     h1 { color: #C8F264; }
@@ -72,7 +72,7 @@ Return ONLY the HTML content, no markdown or extra text.`;
   </style>
 </head>
 <body>
-  <a href="/">← Back to AgentCFO</a>
+  <a href="/">← Back to Layer ROI</a>
   ${htmlContent}
 </body>
 </html>
@@ -85,7 +85,7 @@ Return ONLY the HTML content, no markdown or extra text.`;
   // Commit and push
   execSync(`git add ${filename}`);
   execSync(`git commit -m "content: publish SEO article - ${title}"`);
-  execSync(`git push https://hridhaygarg:${process.env.GITHUB_TOKEN}@github.com/hridhaygarg/AgentCFO.git main`);
+  execSync(`git push https://hridhaygarg:${process.env.GITHUB_TOKEN}@github.com/hridhaygarg/Layer ROI.git main`);
 
   // Log to database
   await logContent({
@@ -93,7 +93,7 @@ Return ONLY the HTML content, no markdown or extra text.`;
     title,
     slug,
     publishDate: new Date(),
-    url: `https://agent-cfo-six.vercel.app/blog/${slug}.html`,
+    url: `https://layeroi.com/blog/${slug}.html`,
   });
 
   console.log(`✅ Published: ${title}`);

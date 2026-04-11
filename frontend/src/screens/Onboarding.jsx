@@ -15,8 +15,8 @@ export default function Onboarding() {
 
       {[
         { step: 1, title: 'Name Your Agent', desc: 'Give your agent a human-readable name' },
-        { step: 2, title: 'Change One Line of Code', desc: 'Update your baseURL to point to AgentCFO' },
-        { step: 3, title: 'Make an API Call', desc: 'Your agent will now route through AgentCFO' },
+        { step: 2, title: 'Change One Line of Code', desc: 'Update your baseURL to point to Layer ROI' },
+        { step: 3, title: 'Make an API Call', desc: 'Your agent will now route through Layer ROI' },
         { step: 4, title: 'Watch the Dashboard', desc: 'Costs appear in real-time' },
       ].map(({ step, title, desc }) => (
         <div key={step} style={{

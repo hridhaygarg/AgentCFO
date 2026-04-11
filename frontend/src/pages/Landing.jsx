@@ -8,7 +8,7 @@ export default function Landing() {
         padding: '20px 40px',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
       }}>
-        <h1 style={{ fontSize: '24px' }}>AgentCFO</h1>
+        <h1 style={{ fontSize: '24px' }}>Layer ROI</h1>
         <a href="/signup"><button style={{
           background: '#C8F264',
           color: '#080808',
@@ -146,7 +146,7 @@ export default function Landing() {
         marginTop: '80px',
         color: 'rgba(232,230,225,0.5)',
       }}>
-        <p>&copy; 2026 AgentCFO. All rights reserved.</p>
+        <p>&copy; 2026 Layer ROI. All rights reserved.</p>
       </footer>
     </div>
   )

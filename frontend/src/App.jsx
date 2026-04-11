@@ -62,7 +62,7 @@ export default function App() {
         <Sidebar active={currentScreen} onNavigate={setCurrentScreen} />
         <div style={{ marginLeft: '64px', width: 'calc(100% - 64px)' }}>
           <div style={{ height: '60px', background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
-            <h1 style={{ fontFamily: '"DM Serif Display", serif', fontSize: '20px' }}>AgentCFO</h1>
+            <h1 style={{ fontFamily: '"DM Serif Display", serif', fontSize: '20px' }}>Layer ROI</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '12px', color: 'rgba(232,230,225,0.7)' }}>System</span>
               <div style={{
@@ -88,7 +88,7 @@ export default function App() {
       <Sidebar active={currentScreen} onNavigate={setCurrentScreen} />
       <div style={{ marginLeft: '64px', width: 'calc(100% - 64px)' }}>
         <div style={{ height: '60px', background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
-          <h1 style={{ fontFamily: '"DM Serif Display", serif', fontSize: '20px' }}>AgentCFO</h1>
+          <h1 style={{ fontFamily: '"DM Serif Display", serif', fontSize: '20px' }}>Layer ROI</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '12px', color: 'rgba(232,230,225,0.7)' }}>System</span>
             <div style={{

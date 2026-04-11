@@ -19,15 +19,15 @@ export async function createFreeUser(name, email, company) {
 
   // Send welcome email
   await resend.emails.send({
-    from: 'onboarding@agentcfo.com',
+    from: 'onboarding@layerROI.com',
     to: email,
-    subject: 'Welcome to AgentCFO – Your API Key Inside',
+    subject: 'Welcome to Layer ROI – Your API Key Inside',
     html: `
-      <h1>Welcome to AgentCFO, ${name}!</h1>
+      <h1>Welcome to Layer ROI, ${name}!</h1>
       <p>Your API key is ready. Update one line of code in your agent:</p>
       <pre>baseURL: 'https://agentcfo-production.up.railway.app'</pre>
       <p>Your API key: <code>${apiKey}</code></p>
-      <p>You have 2 agents and 14 days of history on the free plan. <a href="https://agent-cfo-six.vercel.app">See your dashboard</a></p>
+      <p>You have 2 agents and 14 days of history on the free plan. <a href="https://layeroi.com">See your dashboard</a></p>
     `,
   });
 
@@ -49,13 +49,13 @@ export async function sendDay2Email(user) {
 
   if (topAgent) {
     await resend.emails.send({
-      from: 'product@agentcfo.com',
+      from: 'product@layerROI.com',
       to: user.email,
-      subject: `Your first 48 hours — AgentCFO found something interesting`,
+      subject: `Your first 48 hours — Layer ROI found something interesting`,
       html: `
         <p>Hi ${user.name},</p>
         <p>Your ${topAgent.name} agent spent $${topAgent.cost} in the first 48 hours with ROI of ${topAgent.roi}×.</p>
-        <p>Track all your agents on the <a href="https://agent-cfo-six.vercel.app">dashboard</a>.</p>
+        <p>Track all your agents on the <a href="https://layeroi.com">dashboard</a>.</p>
       `,
     });
   }
@@ -65,14 +65,14 @@ export async function sendDay14Email(user) {
   const totalSpend = await getUserSpend(user.id, 14);
 
   await resend.emails.send({
-    from: 'product@agentcfo.com',
+    from: 'product@layerROI.com',
     to: user.email,
     subject: `Your trial is ending – 20% off your first month`,
     html: `
       <p>Hi ${user.name},</p>
       <p>You've spent $${totalSpend} in 2 weeks. Upgrade to unlimited agents and keep full history.</p>
       <p>Use code <strong>SAVE20</strong> for 20% off your first month.</p>
-      <p><a href="https://agent-cfo-six.vercel.app/upgrade">Upgrade now</a></p>
+      <p><a href="https://layeroi.com/upgrade">Upgrade now</a></p>
     `,
   });
 }

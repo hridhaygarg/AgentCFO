@@ -9,7 +9,7 @@ export async function sendSlackAlert(alert) {
   }
 
   const message = {
-    text: `🚨 AgentCFO Alert: Runaway Loop Detected`,
+    text: `🚨 Layer ROI Alert: Runaway Loop Detected`,
     blocks: [
       {
         type: 'section',
@@ -51,7 +51,7 @@ export async function sendSlackCostSummary(summary) {
   }).join('\n');
 
   const message = {
-    text: `📊 AgentCFO Daily Summary`,
+    text: `📊 Layer ROI Daily Summary`,
     blocks: [
       {
         type: 'section',

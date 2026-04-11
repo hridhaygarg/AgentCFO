@@ -128,6 +128,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`AgentCFO server running on port ${PORT}`);
+  console.log(`Layer ROI server running on port ${PORT}`);
   console.log(`Proxy endpoint: POST http://localhost:${PORT}/v1/chat/completions`);
 });
