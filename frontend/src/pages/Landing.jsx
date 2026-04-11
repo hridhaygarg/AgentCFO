@@ -220,7 +220,7 @@ export default function Landing() {
 function StatCard({ number, suffix, label, color = colors.accentGreen }) {
   const ref = useRef();
   const isVisible = useInView(ref, 0.1);
-  const count = isVisible ? useCountUp(number) : 0;
+  const count = useCountUp(number, 1200, isVisible);
   return (
     <FadeUpChild>
       <div ref={ref} style={{ textAlign: 'center' }}>
