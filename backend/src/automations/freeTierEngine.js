@@ -92,7 +92,7 @@ export async function sendDay2Email(user) {
       subject: `Your first 48 hours — Layer ROI found something interesting`,
       html: `
         <p>Hi ${user.name},</p>
-        <p>Your ${topAgent.name} agent spent $${topAgent.cost} in the first 48 hours with ROI of ${topAgent.roi}×.</p>
+        <p>Your ${topAgent.name} agent has cost $${topAgent.cost.toFixed(2)} so far.</p>
         <p>Track all your agents on the <a href="https://layeroi.com">dashboard</a>.</p>
       `,
     });
