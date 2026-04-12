@@ -1,12 +1,11 @@
 import { Resend } from 'resend';
-import axios from 'axios';
 import { logLead, checkLeadIntent } from './database.js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const APOLLO_KEY = process.env.APOLLO_API_KEY;
-const HUNTER_KEY = process.env.HUNTER_API_KEY;
 
 export async function fetchLeadsFromApollo() {
+  const { default: axios } = await import('axios');
   const response = await axios.post('https://api.apollo.io/v1/people/search', {
     api_key: APOLLO_KEY,
     q_person_titles: ['Head of AI', 'VP Engineering', 'CTO', 'Chief AI Officer'],
@@ -18,27 +17,17 @@ export async function fetchLeadsFromApollo() {
   return response.data.people || [];
 }
 
-export async function enrichWithHunterEmail(person) {
-  try {
-    const response = await axios.get('https://api.hunter.io/v2/email-finder', {
-      params: {
-        domain: person.company.domain,
-        first_name: person.first_name,
-        last_name: person.last_name,
-        api_key: HUNTER_KEY,
-      },
-    });
-    return response.data.data?.email;
-  } catch {
-    return person.email;
-  }
-}
-
 export async function sendColdEmailSequence() {
   const leads = await fetchLeadsFromApollo();
 
   for (const person of leads) {
-    const email = await enrichWithHunterEmail(person);
+    // Apollo includes email field directly
+    const email = person.email;
+
+    if (!email) {
+      console.log(`⚠️ No email found for ${person.first_name} ${person.last_name} at ${person.company?.name}`);
+      continue;
+    }
 
     // Email 1: Initial outreach
     await resend.emails.send({
@@ -59,22 +48,22 @@ export async function sendColdEmailSequence() {
       firstName: person.first_name,
       lastName: person.last_name,
       email,
-      company: person.company.name,
+      company: person.company?.name,
       title: person.title,
       sequence: 1,
       sentAt: new Date(),
     });
+
+    console.log(`📧 Cold email sent to ${email}`);
   }
 }
 
 export async function checkClicksAndAlert() {
   // This would integrate with Resend webhooks to track clicks
-  // When a click is detected, log as hot lead and send Slack alert
+  // When a click is detected, log as hot lead
   const hotLeads = await checkLeadIntent();
 
   for (const lead of hotLeads) {
-    await axios.post(process.env.SLACK_WEBHOOK_URL, {
-      text: `🔥 Hot lead: ${lead.firstName} ${lead.lastName} at ${lead.company} clicked the Layer ROI link`,
-    });
+    console.log(`🔥 HOT LEAD: ${lead.firstName} ${lead.lastName} at ${lead.company} clicked the Layer ROI link`);
   }
 }

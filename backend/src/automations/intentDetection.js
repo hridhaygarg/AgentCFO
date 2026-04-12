@@ -31,9 +31,7 @@ export async function trackPageVisit(ip, page) {
     const intent = await checkHighIntentCompany(company.company);
 
     if (intent.visits >= 3) {
-      await axios.post(process.env.SLACK_WEBHOOK_URL, {
-        text: `🎯 High intent: ${company.company} visited ${intent.visits} times this week. Pages: ${intent.pages.join(', ')}`,
-      });
+      console.log(`🎯 HIGH INTENT: ${company.company} visited ${intent.visits} times this week. Pages: ${intent.pages.join(', ')}`);
     }
   }
 }
@@ -49,9 +47,7 @@ export async function checkSignupFromTargetCompany(email, company) {
     const companyData = response.data;
 
     if (companyData.metrics?.employees > 500) {
-      await axios.post(process.env.SLACK_WEBHOOK_URL, {
-        text: `🌟 Priority signup: ${email} from ${company} (${companyData.metrics.employees} employees)`,
-      });
+      console.log(`🌟 PRIORITY SIGNUP: ${email} from ${company} (${companyData.metrics.employees} employees)`);
     }
   } catch {
     // Continue without error

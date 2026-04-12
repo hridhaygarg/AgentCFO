@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import { forwardToOpenAI, requestLog } from './proxy.js';
 import { initDatabase, logAPICall, getAgentCosts, getAllAgents } from './database.js';
 import { initLoopDetector, checkRunawayLoop, getAgentCallStats } from './loopDetector.js';
-import { sendSlackAlert } from './slack.js';
 import { initAutomations } from './automations/cron.js';
 
 dotenv.config();
@@ -116,12 +115,7 @@ app.post('/v1/chat/completions', (req, res) => {
   const loopCheck = checkRunawayLoop(agentName, req.body.messages);
   if (loopCheck.isLoop) {
     blockedAgents.add(agentName);
-    console.error(`[ALERT] Runaway loop detected for agent: ${agentName}`);
-    sendSlackAlert({
-      agent: agentName,
-      reason: loopCheck.reason,
-      callCount: loopCheck.callCount,
-    });
+    console.error(`🔴 RUNAWAY LOOP DETECTED for agent: ${agentName} | Reason: ${loopCheck.reason} | Calls: ${loopCheck.callCount} in 90s`);
     return res.status(429).json({
       error: `Runaway loop detected (${loopCheck.callCount} calls in 90s). Agent blocked.`,
     });
