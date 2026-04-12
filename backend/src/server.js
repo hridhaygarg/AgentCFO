@@ -19,7 +19,7 @@ initLoopDetector();
 initAutomations();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 const blockedAgents = new Set();
 
 app.use(cors());
@@ -213,6 +213,5 @@ process.on('SIGTERM', async () => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Layer ROI server running on port ${PORT}`);
-  console.log(`Proxy endpoint: POST http://localhost:${PORT}/v1/chat/completions`);
+  console.log('✅ Layer ROI backend is LIVE on port', PORT);
 });
