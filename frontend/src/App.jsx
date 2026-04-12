@@ -8,6 +8,19 @@ import Onboarding from './screens/Onboarding'
 import Signup from './pages/Signup'
 import Landing from './pages/Landing'
 
+const colors = {
+  bgPrimary: '#fafaf9',
+  bgSurface: '#ffffff',
+  bgSubtle: '#f5f5f4',
+  borderDefault: 'rgba(0,0,0,0.08)',
+  textPrimary: '#111827',
+  textSecondary: '#6b7280',
+  textTertiary: '#9ca3af',
+  accentGreen: '#16a34a',
+  shadowSm: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
+  shadowMd: '0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04)',
+};
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('overview')
   const [isProxyActive, setIsProxyActive] = useState(false)
@@ -44,6 +57,13 @@ export default function App() {
   }
 
   const CurrentScreen = screens[currentScreen] || Overview
+  const screenNames = {
+    overview: 'Overview',
+    agents: 'Agents',
+    budget: 'Budget',
+    report: 'Reports',
+    onboarding: 'Onboarding',
+  }
 
   // Show landing page if on root
   if (currentPath === '/' || currentPath === '') {
@@ -55,26 +75,60 @@ export default function App() {
     return <Signup onSuccess={() => window.location.href = '/dashboard'} />
   }
 
-  // Show dashboard for /dashboard and any dashboard routes
-  if (currentPath.startsWith('/dashboard')) {
+  // Dashboard layout for /dashboard and all dashboard routes
+  const isDashboard = currentPath === '/dashboard' || currentPath.startsWith('/dashboard')
+
+  if (isDashboard) {
     return (
-      <div style={{ display: 'flex' }}>
-        <Sidebar active={currentScreen} onNavigate={setCurrentScreen} />
-        <div style={{ marginLeft: '64px', width: 'calc(100% - 64px)' }}>
-          <div style={{ height: '60px', background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
-            <h1 style={{ fontFamily: '"DM Serif Display", serif', fontSize: '20px' }}>Layer ROI</h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', color: 'rgba(232,230,225,0.7)' }}>System</span>
-              <div style={{
-                width: '8px',
-                height: '8px',
-                background: isProxyActive ? '#C8F264' : '#FF4D4D',
-                borderRadius: '50%',
-                animation: isProxyActive ? 'pulse 2s infinite' : 'none',
-              }} />
+      <div style={{ display: 'flex', minHeight: '100vh', background: colors.bgPrimary, fontFamily: 'Inter, sans-serif' }}>
+        {/* Sidebar */}
+        <Sidebar active={currentScreen} onNavigate={setCurrentScreen} colors={colors} />
+
+        {/* Main content */}
+        <div style={{ flex: 1, marginLeft: '240px' }}>
+          {/* Top bar */}
+          <div style={{
+            height: '64px',
+            background: colors.bgSurface,
+            borderBottom: `1px solid ${colors.borderDefault}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 40px',
+            position: 'sticky',
+            top: 0,
+            zIndex: 50,
+            boxShadow: colors.shadowSm,
+          }}>
+            <h1 style={{
+              fontFamily: 'Playfair Display, serif',
+              fontSize: '20px',
+              fontWeight: '600',
+              color: colors.textPrimary,
+            }}>
+              {screenNames[currentScreen] || 'Dashboard'}
+            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <span style={{ fontSize: '12px', color: colors.textTertiary, fontFamily: 'IBM Plex Mono, monospace' }}>
+                {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{
+                  width: '8px',
+                  height: '8px',
+                  background: isProxyActive ? colors.accentGreen : '#dc2626',
+                  borderRadius: '50%',
+                  animation: isProxyActive ? 'pulse 2s infinite' : 'none',
+                }} />
+                <span style={{ fontSize: '11px', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>
+                  {isProxyActive ? 'Live' : 'Offline'}
+                </span>
+              </div>
             </div>
           </div>
-          <main style={{ padding: '24px', background: '#080808', minHeight: 'calc(100vh - 60px)' }}>
+
+          {/* Main content area */}
+          <main style={{ padding: '40px', minHeight: 'calc(100vh - 64px)' }}>
             <CurrentScreen />
           </main>
         </div>
@@ -84,23 +138,49 @@ export default function App() {
 
   // Default to dashboard
   return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar active={currentScreen} onNavigate={setCurrentScreen} />
-      <div style={{ marginLeft: '64px', width: 'calc(100% - 64px)' }}>
-        <div style={{ height: '60px', background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
-          <h1 style={{ fontFamily: '"DM Serif Display", serif', fontSize: '20px' }}>Layer ROI</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'rgba(232,230,225,0.7)' }}>System</span>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              background: isProxyActive ? '#C8F264' : '#FF4D4D',
-              borderRadius: '50%',
-              animation: isProxyActive ? 'pulse 2s infinite' : 'none',
-            }} />
+    <div style={{ display: 'flex', minHeight: '100vh', background: colors.bgPrimary, fontFamily: 'Inter, sans-serif' }}>
+      <Sidebar active={currentScreen} onNavigate={setCurrentScreen} colors={colors} />
+      <div style={{ flex: 1, marginLeft: '240px' }}>
+        <div style={{
+          height: '64px',
+          background: colors.bgSurface,
+          borderBottom: `1px solid ${colors.borderDefault}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 40px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          boxShadow: colors.shadowSm,
+        }}>
+          <h1 style={{
+            fontFamily: 'Playfair Display, serif',
+            fontSize: '20px',
+            fontWeight: '600',
+            color: colors.textPrimary,
+          }}>
+            {screenNames[currentScreen] || 'Dashboard'}
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span style={{ fontSize: '12px', color: colors.textTertiary, fontFamily: 'IBM Plex Mono, monospace' }}>
+              {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                background: isProxyActive ? colors.accentGreen : '#dc2626',
+                borderRadius: '50%',
+                animation: isProxyActive ? 'pulse 2s infinite' : 'none',
+              }} />
+              <span style={{ fontSize: '11px', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>
+                {isProxyActive ? 'Live' : 'Offline'}
+              </span>
+            </div>
           </div>
         </div>
-        <main style={{ padding: '24px', background: '#080808', minHeight: 'calc(100vh - 60px)' }}>
+        <main style={{ padding: '40px', minHeight: 'calc(100vh - 64px)' }}>
           <CurrentScreen />
         </main>
       </div>

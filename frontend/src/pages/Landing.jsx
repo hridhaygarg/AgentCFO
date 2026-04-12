@@ -1,27 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
 
 const colors = {
-  bg: '#080808',
-  card: '#141414',
-  elevated: '#1a1a1a',
-  border: 'rgba(255,255,255,0.06)',
-  borderHover: 'rgba(255,255,255,0.12)',
-  borderBright: 'rgba(255,255,255,0.18)',
-  textPrimary: '#e8e6e1',
-  textSecondary: 'rgba(232,230,225,0.55)',
-  textTertiary: 'rgba(232,230,225,0.28)',
-  accentGreen: '#c8f264',
-  accentGreenDim: 'rgba(200,242,100,0.08)',
-  accentGreenBorder: 'rgba(200,242,100,0.2)',
-  dangerRed: '#ff4d4d',
-  dangerRedDim: 'rgba(255,77,77,0.08)',
-  warningAmber: '#f5a623',
-  warningAmberDim: 'rgba(245,166,35,0.08)',
+  bgPrimary: '#fafaf9',
+  bgSurface: '#ffffff',
+  bgSubtle: '#f5f5f4',
+  bgProfit: '#f0fdf4',
+  bgLoss: '#fef2f2',
+  bgWarning: '#fffbeb',
+  borderDefault: 'rgba(0,0,0,0.08)',
+  borderStrong: 'rgba(0,0,0,0.15)',
+  textPrimary: '#111827',
+  textSecondary: '#6b7280',
+  textTertiary: '#9ca3af',
+  accentGreen: '#16a34a',
+  accentGreenLight: '#dcfce7',
+  accentGreenBorder: '#86efac',
+  dangerRed: '#dc2626',
+  dangerLight: '#fef2f2',
+  dangerBorder: '#fca5a5',
+  warningAmber: '#d97706',
+  warningLight: '#fffbeb',
+  shadowSm: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
+  shadowMd: '0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04)',
+  shadowLg: '0 10px 15px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.04)',
 };
 
 function useCountUp(target, duration = 1200, trigger = true) {
   const [count, setCount] = useState(0);
-
   useEffect(() => {
     if (!trigger) return;
     let start = 0;
@@ -37,11 +42,10 @@ function useCountUp(target, duration = 1200, trigger = true) {
     }, 16);
     return () => clearInterval(interval);
   }, [target, duration, trigger]);
-
   return count;
 }
 
-function useInView(ref, threshold = 0.1) {
+function useInView(ref, threshold = 0.15) {
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
@@ -53,11 +57,11 @@ function useInView(ref, threshold = 0.1) {
   return isVisible;
 }
 
-function FadeUpChild({ children, delay = 0 }) {
+function FadeUp({ children, delay = 0 }) {
   const ref = useRef();
-  const isVisible = useInView(ref, 0.1);
+  const isVisible = useInView(ref, 0.15);
   return (
-    <div ref={ref} style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: `all 500ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms` }}>
+    <div ref={ref} style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(12px)', transition: `all 400ms cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms` }}>
       {children}
     </div>
   );
@@ -65,23 +69,15 @@ function FadeUpChild({ children, delay = 0 }) {
 
 export default function Landing() {
   const [scrollY, setScrollY] = useState(0);
-  const [navBorder, setNavBorder] = useState(false);
-  const scrollProgress = (scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
   const problemRef = useRef();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-      setNavBorder(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', () => setScrollY(window.scrollY));
+    return () => window.removeEventListener('scroll', () => {});
   }, []);
 
   const scrollToSection = () => {
-    if (problemRef.current) {
-      problemRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    problemRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const navigateToDashboard = () => {
@@ -89,137 +85,225 @@ export default function Landing() {
   };
 
   return (
-    <div style={{ background: colors.bg, color: colors.textPrimary, minHeight: '100vh' }}>
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '2px', background: colors.accentGreen, width: `${scrollProgress}%`, zIndex: 1000, transition: 'width 100ms ease' }} />
-
-      {/* Nav */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 40px', backdropFilter: 'blur(16px)', borderBottom: navBorder ? `1px solid ${colors.border}` : 'none', background: navBorder ? 'rgba(8,8,8,0.7)' : 'transparent', transition: 'all 200ms ease' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '8px', height: '8px', background: colors.accentGreen, borderRadius: '50%' }} />
-          <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '14px', fontWeight: '600', letterSpacing: '1px' }}>Layer ROI</span>
-        </div>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <button onClick={navigateToDashboard} style={{ textDecoration: 'none', color: colors.textSecondary, fontSize: '14px', fontFamily: 'DM Mono', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 200ms ease' }} onMouseEnter={(e) => (e.target.style.color = colors.textPrimary)} onMouseLeave={(e) => (e.target.style.color = colors.textSecondary)}>Sign in</button>
-          <a href="/signup" style={{ background: colors.accentGreen, color: colors.bg, padding: '10px 20px', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontFamily: 'DM Mono', fontWeight: '600', border: 'none', cursor: 'pointer', transition: 'transform 200ms ease' }} onMouseDown={(e) => (e.target.style.transform = 'scale(0.97)')} onMouseUp={(e) => (e.target.style.transform = 'scale(1)')}>Start free</a>
+    <div style={{ background: colors.bgPrimary, color: colors.textPrimary, minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+      {/* Navigation */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 999, background: colors.bgSurface, borderBottom: `1px solid ${colors.borderDefault}`, boxShadow: scrollY > 10 ? colors.shadowSm : 'none', transition: 'box-shadow 200ms ease' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px', height: '64px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '8px', height: '8px', background: colors.accentGreen, borderRadius: '50%' }} />
+            <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '18px', fontWeight: '600', color: colors.textPrimary }}>Layer ROI</span>
+          </div>
+          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            <button onClick={navigateToDashboard} style={{ background: 'none', border: 'none', fontSize: '14px', fontWeight: '500', color: colors.textSecondary, cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={(e) => (e.target.style.color = colors.textPrimary)} onMouseLeave={(e) => (e.target.style.color = colors.textSecondary)}>Sign in</button>
+            <a href="/signup" style={{ background: colors.bgSurface, border: `1px solid ${colors.accentGreen}`, color: colors.accentGreen, padding: '8px 20px', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'all 200ms', display: 'inline-block' }} onMouseEnter={(e) => { e.target.style.background = colors.accentGreen; e.target.style.color = colors.bgSurface; }} onMouseLeave={(e) => { e.target.style.background = colors.bgSurface; e.target.style.color = colors.accentGreen; }}>Start free →</a>
+          </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '80px', position: 'relative' }}>
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} preserveAspectRatio="none">
-          <defs><pattern id="dots" x="32" y="32" patternUnits="userSpaceOnUse"><circle cx="16" cy="16" r="1" fill="rgba(255,255,255,0.03)" /></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#dots)" />
-        </svg>
-
-        <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '900px', padding: '0 40px' }}>
-          <FadeUpChild delay={0}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', border: `1px solid ${colors.accentGreenBorder}`, borderRadius: '20px', marginBottom: '32px', background: colors.accentGreenDim }}>
-              <div style={{ width: '6px', height: '6px', background: colors.accentGreen, borderRadius: '50%', animation: 'pulse 2s ease-in-out infinite' }} />
-              <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '12px', color: colors.accentGreen, fontWeight: '500' }}>Now in early access</span>
+      {/* Hero Section */}
+      <section style={{ background: colors.bgSurface, padding: '96px 40px', textAlign: 'center' }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <FadeUp delay={0}>
+            <div style={{ display: 'inline-block', padding: '8px 16px', border: `1px solid ${colors.accentGreenBorder}`, borderRadius: '20px', background: colors.accentGreenLight, marginBottom: '32px' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', fontWeight: '500', color: colors.accentGreen }}>Financial intelligence for AI teams</span>
             </div>
-          </FadeUpChild>
+          </FadeUp>
 
-          <FadeUpChild delay={80}>
-            <h1 style={{ fontFamily: 'DM Serif Display, serif', fontSize: '64px', lineHeight: 1.2, marginBottom: '24px', fontWeight: '400' }}>
-              Your AI agents are spending money. <span style={{ color: colors.accentGreen, fontStyle: 'italic' }}>Are they worth it?</span>
+          <FadeUp delay={80}>
+            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '72px', fontWeight: '700', lineHeight: 1.05, marginBottom: '16px', color: colors.textPrimary }}>
+              Your AI agents are spending money.<br />
+              <span style={{ color: colors.accentGreen, fontStyle: 'italic' }}>Are they earning it?</span>
             </h1>
-          </FadeUpChild>
+          </FadeUp>
 
-          <FadeUpChild delay={160}>
-            <p style={{ fontSize: '18px', color: colors.textSecondary, marginBottom: '48px', lineHeight: 1.6, fontWeight: 300, maxWidth: '700px', margin: '0 auto 48px' }}>
-              Layer ROI is the first financial control layer for AI agents — built for CFOs, not engineers. See your agent P&L in 15 minutes.
+          <FadeUp delay={160}>
+            <p style={{ fontSize: '20px', color: colors.textSecondary, marginBottom: '48px', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto 48px' }}>
+              Layer ROI is the only financial control layer for AI agents. See your agent P&L in 15 minutes — built for CFOs, not engineers.
             </p>
-          </FadeUpChild>
+          </FadeUp>
 
-          <FadeUpChild delay={240}>
+          <FadeUp delay={240}>
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '48px' }}>
-              <a href="/signup" style={{ background: colors.accentGreen, color: colors.bg, padding: '16px 32px', borderRadius: '6px', textDecoration: 'none', fontSize: '16px', fontFamily: 'DM Mono', fontWeight: '600', border: 'none', cursor: 'pointer', transition: 'all 200ms ease' }} onMouseDown={(e) => (e.target.style.transform = 'scale(0.97)')} onMouseUp={(e) => (e.target.style.transform = 'scale(1)')}>Start for free →</a>
-              <button onClick={scrollToSection} style={{ background: 'transparent', color: colors.textSecondary, padding: '16px 32px', borderRadius: '6px', border: `1px solid ${colors.border}`, cursor: 'pointer', fontSize: '16px', fontFamily: 'DM Mono', fontWeight: '600', transition: 'all 200ms ease' }} onMouseEnter={(e) => { e.target.style.borderColor = colors.borderHover; e.target.style.color = colors.textPrimary; }} onMouseLeave={(e) => { e.target.style.borderColor = colors.border; e.target.style.color = colors.textSecondary; }}>See how it works ↓</button>
+              <a href="/signup" style={{ background: colors.accentGreen, color: colors.bgSurface, padding: '12px 28px', borderRadius: '6px', textDecoration: 'none', fontSize: '16px', fontWeight: '500', fontFamily: 'Inter, sans-serif', cursor: 'pointer', transition: 'transform 200ms', display: 'inline-block' }} onMouseDown={(e) => (e.target.style.transform = 'scale(0.98)')} onMouseUp={(e) => (e.target.style.transform = 'scale(1)')}>Start for free →</a>
+              <button onClick={scrollToSection} style={{ background: colors.bgSurface, color: colors.textSecondary, padding: '12px 28px', borderRadius: '6px', border: 'none', fontSize: '16px', fontWeight: '500', fontFamily: 'Inter, sans-serif', cursor: 'pointer', transition: 'color 200ms', textDecoration: 'underline' }} onMouseEnter={(e) => (e.target.style.color = colors.textPrimary)} onMouseLeave={(e) => (e.target.style.color = colors.textSecondary)}>See how it works</button>
             </div>
-          </FadeUpChild>
+          </FadeUp>
 
-          <FadeUpChild delay={320}>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', fontSize: '14px', color: colors.textTertiary, fontFamily: 'DM Mono' }}>
-              <span>15-min setup</span><span>·</span><span>No credit card</span><span>·</span><span>Cancel anytime</span>
+          <FadeUp delay={320}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '14px', color: colors.textTertiary, fontFamily: 'Inter, sans-serif' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ color: colors.accentGreen, fontSize: '16px' }}>✓</span> Free for 2 agents</span>
+              <span>·</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ color: colors.accentGreen, fontSize: '16px' }}>✓</span> 15-min setup</span>
+              <span>·</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ color: colors.accentGreen, fontSize: '16px' }}>✓</span> No credit card</span>
             </div>
-          </FadeUpChild>
+          </FadeUp>
         </div>
       </section>
 
-      {/* Stats */}
-      <section style={{ borderTop: `1px solid ${colors.border}`, borderBottom: `1px solid ${colors.border}`, padding: '64px 40px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px', maxWidth: '1400px', margin: '0 auto' }}>
-        <StatCard number={37} suffix="+" label="Average AI agents per enterprise in 2026" />
-        <StatCard number={40} suffix="%" label="Of agentic AI projects cancelled due to unclear ROI" color={colors.dangerRed} />
-        <StatCard number={0} suffix="" label="What most CFOs can prove their agents are earning" />
-        <StatCard number={15} suffix=" min" label="To connect Layer ROI and see your first P&L" />
+      {/* Stats Bar */}
+      <section style={{ background: colors.bgSubtle, borderTop: `1px solid ${colors.borderDefault}`, borderBottom: `1px solid ${colors.borderDefault}`, padding: '64px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px' }}>
+          <StatCard number={37} suffix="+" label="Average AI agents per enterprise in 2026" />
+          <StatCard number={40} suffix="%" label="Of agentic AI projects cancelled due to unclear ROI" color={colors.dangerRed} />
+          <StatCard number={0} suffix="" label="What most CFOs can prove their agents are earning" />
+          <StatCard number={15} suffix=" min" label="To connect Layer ROI and see your first P&L" />
+        </div>
       </section>
 
-      {/* Problem */}
-      <section ref={problemRef} style={{ padding: '80px 40px', maxWidth: '1400px', margin: '0 auto' }}>
-        <FadeUpChild>
-          <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-            <div style={{ fontFamily: 'DM Mono', fontSize: '12px', color: colors.accentGreen, fontWeight: '600', letterSpacing: '2px', marginBottom: '16px' }}>THE PROBLEM</div>
-            <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: '48px', marginBottom: '24px' }}>Every tool speaks engineer. <span style={{ fontStyle: 'italic' }}>Nobody speaks CFO.</span></h2>
-            <p style={{ color: colors.textSecondary, fontSize: '18px', maxWidth: '600px', margin: '0 auto' }}>The gap between how your agents spend money and what your board sees is the difference between control and chaos.</p>
-          </div>
-        </FadeUpChild>
+      {/* Problem Section */}
+      <section ref={problemRef} style={{ background: colors.bgSurface, padding: '96px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <FadeUp>
+            <div style={{ marginBottom: '80px' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', fontWeight: '600', color: colors.accentGreen, letterSpacing: '2px', textTransform: 'uppercase' }}>The Problem</span>
+              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '48px', fontWeight: '600', marginTop: '16px', marginBottom: '24px', color: colors.textPrimary }}>Every tool speaks engineer.<br /><span style={{ fontStyle: 'italic' }}>Nobody speaks CFO.</span></h2>
+              <p style={{ fontSize: '18px', color: colors.textSecondary, maxWidth: '600px' }}>The gap between how your agents spend money and what your board sees is the difference between control and chaos.</p>
+            </div>
+          </FadeUp>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
-          <ProblemCard title="Invisible Spending" description="CFO gets one invoice, cannot attribute costs to which agents are burning money." />
-          <ProblemCard title="Runaway Loops" description="One agent can burn $4,000 in 90 minutes on API calls, undetected until the invoice arrives." />
-          <ProblemCard title="No ROI Proof" description="Board asks what they're getting. Engineering says 'it's complicated.' CEO smiles nervously." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
+            <ProblemCard icon="👁️" title="Invisible Spending" description="CFO gets one invoice, cannot attribute costs to which agents are burning money." />
+            <ProblemCard icon="⚠️" title="Runaway Loops" description="One agent can burn $4,000 in 90 minutes on API calls, undetected until the invoice arrives." />
+            <ProblemCard icon="❓" title="No ROI Proof" description="Board asks what they're getting. Engineering says 'it's complicated.' CEO smiles nervously." />
+          </div>
         </div>
       </section>
 
       {/* Dashboard Mockup */}
-      <section style={{ padding: '80px 40px', maxWidth: '1400px', margin: '0 auto' }}>
-        <FadeUpChild>
-          <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-            <div style={{ fontFamily: 'DM Mono', fontSize: '12px', color: colors.accentGreen, fontWeight: '600', letterSpacing: '2px', marginBottom: '16px' }}>THE PRODUCT</div>
-            <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: '48px', marginBottom: '24px' }}>Your AI workforce profit & loss</h2>
-          </div>
-        </FadeUpChild>
+      <section style={{ background: colors.bgSubtle, padding: '96px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <FadeUp>
+            <div style={{ marginBottom: '80px' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', fontWeight: '600', color: colors.accentGreen, letterSpacing: '2px', textTransform: 'uppercase' }}>The Product</span>
+              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '48px', fontWeight: '600', marginTop: '16px', color: colors.textPrimary }}>Your AI workforce profit & loss</h2>
+            </div>
+          </FadeUp>
 
-        <FadeUpChild delay={100}>
-          <div style={{ background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' }}>
-            <div style={{ background: colors.elevated, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: `1px solid ${colors.border}` }}>
-              <div style={{ width: '12px', height: '12px', background: '#ff5f56', borderRadius: '50%' }} />
-              <div style={{ width: '12px', height: '12px', background: '#ffbd2e', borderRadius: '50%' }} />
-              <div style={{ width: '12px', height: '12px', background: '#27c93f', borderRadius: '50%' }} />
-              <div style={{ flex: 1, marginLeft: '16px', color: colors.textTertiary, fontSize: '12px', fontFamily: 'DM Mono' }}>dashboard.layeroi.com/overview</div>
+          <FadeUp delay={100}>
+            <div style={{ background: colors.bgSurface, border: `1px solid ${colors.borderDefault}`, borderRadius: '12px', overflow: 'hidden', boxShadow: colors.shadowLg }}>
+              <div style={{ background: colors.bgSubtle, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: `1px solid ${colors.borderDefault}` }}>
+                <div style={{ width: '12px', height: '12px', background: '#ff5f56', borderRadius: '50%' }} />
+                <div style={{ width: '12px', height: '12px', background: '#ffbd2e', borderRadius: '50%' }} />
+                <div style={{ width: '12px', height: '12px', background: '#27c93f', borderRadius: '50%' }} />
+                <div style={{ flex: 1, marginLeft: '16px', color: colors.textTertiary, fontSize: '12px', fontFamily: 'IBM Plex Mono, monospace' }}>dashboard.layeroi.com/overview</div>
+              </div>
+              <div style={{ padding: '40px' }}>
+                <DashboardMockupTable />
+              </div>
             </div>
-            <div style={{ padding: '40px' }}>
-              <DashboardTable />
-            </div>
-          </div>
-        </FadeUpChild>
+          </FadeUp>
+        </div>
       </section>
 
-      {/* CTA Final */}
-      <section style={{ padding: '80px 40px', textAlign: 'center', background: colors.card, borderTop: `1px solid ${colors.border}` }}>
-        <FadeUpChild>
-          <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: '48px', marginBottom: '24px' }}>See your agent P&L in 15 minutes</h2>
-        </FadeUpChild>
-        <FadeUpChild delay={80}>
-          <p style={{ color: colors.textSecondary, fontSize: '18px', marginBottom: '48px', fontWeight: 300 }}>Join the early access program and get financial visibility into your AI agents today.</p>
-        </FadeUpChild>
-        <FadeUpChild delay={160}>
-          <a href="/signup" style={{ display: 'inline-block', background: colors.accentGreen, color: colors.bg, padding: '16px 32px', borderRadius: '6px', textDecoration: 'none', fontSize: '16px', fontFamily: 'DM Mono', fontWeight: '600', cursor: 'pointer', transition: 'all 200ms ease' }} onMouseDown={(e) => (e.target.style.transform = 'scale(0.97)')} onMouseUp={(e) => (e.target.style.transform = 'scale(1)')}>Get started free →</a>
-        </FadeUpChild>
-        <FadeUpChild delay={240}>
-          <div style={{ marginTop: '64px', fontSize: '12px', color: colors.textTertiary, fontFamily: 'DM Mono' }}>© 2026 Layer ROI · The financial control layer for AI agents</div>
-        </FadeUpChild>
+      {/* How It Works */}
+      <section style={{ background: colors.bgSurface, padding: '96px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <FadeUp>
+            <div style={{ marginBottom: '80px', textAlign: 'center' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', fontWeight: '600', color: colors.accentGreen, letterSpacing: '2px', textTransform: 'uppercase' }}>How It Works</span>
+              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '48px', fontWeight: '600', marginTop: '16px', color: colors.textPrimary }}>Three steps to financial visibility</h2>
+            </div>
+          </FadeUp>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '48px', position: 'relative' }}>
+            {[
+              { number: '01', title: 'Connect Agents', description: 'Copy one line into your agent code. Takes 5 minutes.' },
+              { number: '02', title: 'Track Spending', description: 'Layer ROI monitors every API call, models, tokens, and cost in real-time.' },
+              { number: '03', title: 'Optimize ROI', description: 'See which agents make money and which burn it. Kill the losers.' }
+            ].map((step, i) => (
+              <FadeUp key={i} delay={i * 80}>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '64px', fontWeight: '700', color: 'rgba(0,0,0,0.03)', marginBottom: '16px' }}>{step.number}</div>
+                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '18px', fontWeight: '600', color: colors.textPrimary, marginBottom: '12px' }}>{step.title}</h3>
+                  <p style={{ fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>{step.description}</p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
       </section>
+
+      {/* Features */}
+      <section style={{ background: colors.bgSubtle, padding: '96px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <FadeUp>
+            <div style={{ marginBottom: '80px', textAlign: 'center' }}>
+              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '48px', fontWeight: '600', color: colors.textPrimary }}>Built for CFOs. Used by engineers.</h2>
+            </div>
+          </FadeUp>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px' }}>
+            {[
+              { title: 'Real-time cost attribution', desc: 'Know which agent, which model, which call is costing you money.' },
+              { title: 'Runaway loop detection', desc: 'Automatically detect and alert when an agent enters an infinite loop.' },
+              { title: 'Agent P&L statements', desc: 'Monthly reports showing revenue attribution and cost per task.', highlight: true },
+              { title: 'Budget controls', desc: 'Set spend limits per agent and automatically pause at thresholds.' }
+            ].map((feature, i) => (
+              <FadeUp key={i} delay={i * 60}>
+                <div style={{ background: feature.highlight ? colors.bgProfit : colors.bgSurface, border: `1px solid ${feature.highlight ? colors.accentGreenBorder : colors.borderDefault}`, borderRadius: '12px', padding: '24px', transition: 'all 200ms', cursor: 'pointer', boxShadow: colors.shadowSm }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = colors.shadowMd; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = colors.shadowSm; e.currentTarget.style.transform = 'translateY(0)'; }}>
+                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: '600', color: colors.textPrimary, marginBottom: '8px' }}>{feature.title}</h3>
+                  <p style={{ fontSize: '14px', color: colors.textSecondary, lineHeight: 1.6 }}>{feature.desc}</p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section style={{ background: colors.bgSurface, padding: '96px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <FadeUp>
+            <div style={{ marginBottom: '80px', textAlign: 'center' }}>
+              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '48px', fontWeight: '600', color: colors.textPrimary, marginBottom: '24px' }}>Simple, transparent pricing</h2>
+              <p style={{ fontSize: '18px', color: colors.textSecondary, maxWidth: '600px', margin: '0 auto' }}>Start free with 2 agents. Upgrade anytime. No hidden fees.</p>
+            </div>
+          </FadeUp>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
+            <PricingCard title="Starter" price="$499" period="/ month" agents="Up to 5 agents" features={['Real-time tracking', 'Basic alerts', 'Monthly reports']} />
+            <PricingCard title="Business" price="$2,500" period="/ month" agents="Up to 30 agents" features={['Everything in Starter', 'Advanced anomaly detection', 'API access', 'Quarterly reviews']} highlight badge="Most popular" />
+            <PricingCard title="Enterprise" price="Custom" agents="Unlimited agents" features={['Everything in Business', 'Custom integrations', 'Dedicated support', 'Annual planning']} cta="Contact us" />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ background: colors.accentGreen, padding: '96px 40px', textAlign: 'center' }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <FadeUp>
+            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '48px', fontWeight: '600', color: colors.bgSurface, marginBottom: '24px' }}>See your agent ROI in 15 minutes</h2>
+          </FadeUp>
+          <FadeUp delay={80}>
+            <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.9)', marginBottom: '48px', fontWeight: '300' }}>Join the early access program and get financial visibility into your AI agents today.</p>
+          </FadeUp>
+          <FadeUp delay={160}>
+            <a href="/signup" style={{ background: colors.bgSurface, color: colors.accentGreen, padding: '14px 32px', borderRadius: '6px', textDecoration: 'none', fontSize: '16px', fontWeight: '600', fontFamily: 'Inter, sans-serif', cursor: 'pointer', transition: 'transform 200ms', display: 'inline-block' }} onMouseDown={(e) => (e.target.style.transform = 'scale(0.98)')} onMouseUp={(e) => (e.target.style.transform = 'scale(1)')}>Get started free →</a>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ background: colors.bgSurface, borderTop: `1px solid ${colors.borderDefault}`, padding: '40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', color: colors.textTertiary }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '6px', height: '6px', background: colors.accentGreen, borderRadius: '50%' }} />
+            <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: '600', color: colors.textPrimary }}>Layer ROI</span>
+          </div>
+          <span>© 2026 Layer ROI · Financial intelligence for AI teams</span>
+        </div>
+      </footer>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Inter:wght@300;400&display=swap');
-        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { scrollBehavior: smooth; font-family: Inter, sans-serif; }
-        ::-webkit-scrollbar { width: 4px; }
+        html { scroll-behavior: smooth; }
+        body { font-family: Inter, sans-serif; background: ${colors.bgPrimary}; color: ${colors.textPrimary}; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: ${colors.accentGreen}; border-radius: 2px; }
-        ::selection { background: ${colors.accentGreen}; color: ${colors.bg}; }
+        ::-webkit-scrollbar-thumb { background: ${colors.textTertiary}; border-radius: 4px; }
+        ::selection { background: ${colors.accentGreenLight}; color: ${colors.accentGreen}; }
       `}</style>
     </div>
   );
@@ -230,29 +314,55 @@ function StatCard({ number, suffix, label, color = colors.accentGreen }) {
   const isVisible = useInView(ref, 0.1);
   const count = useCountUp(number, 1200, isVisible);
   return (
-    <FadeUpChild>
+    <FadeUp>
       <div ref={ref} style={{ textAlign: 'center' }}>
-        <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: '48px', fontWeight: '400', color: color, marginBottom: '8px' }}>
+        <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '12px', fontWeight: '500', color: colors.textTertiary, textTransform: 'uppercase', marginBottom: '8px' }}>Metric</div>
+        <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '48px', fontWeight: '700', color: color, marginBottom: '8px' }}>
           {count}{suffix}
         </div>
-        <div style={{ fontSize: '14px', color: colors.textSecondary, lineHeight: 1.5 }}>{label}</div>
+        <div style={{ fontSize: '14px', color: colors.textSecondary, lineHeight: 1.6 }}>{label}</div>
       </div>
-    </FadeUpChild>
+    </FadeUp>
   );
 }
 
-function ProblemCard({ title, description }) {
+function ProblemCard({ icon, title, description }) {
   return (
-    <FadeUpChild>
-      <div style={{ background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', padding: '32px', transition: 'all 200ms ease', cursor: 'pointer' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = colors.borderHover; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = colors.border; }}>
-        <h3 style={{ fontFamily: 'DM Serif Display, serif', fontSize: '20px', marginBottom: '12px' }}>{title}</h3>
+    <FadeUp>
+      <div style={{ background: colors.bgSurface, border: `1px solid ${colors.borderDefault}`, borderRadius: '12px', padding: '24px', transition: 'all 200ms', cursor: 'pointer', boxShadow: colors.shadowSm }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = colors.shadowMd; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = colors.shadowSm; e.currentTarget.style.transform = 'translateY(0)'; }}>
+        <div style={{ fontSize: '32px', marginBottom: '12px' }}>{icon}</div>
+        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: '600', color: colors.textPrimary, marginBottom: '8px' }}>{title}</h3>
         <p style={{ fontSize: '14px', color: colors.textSecondary, lineHeight: 1.6 }}>{description}</p>
       </div>
-    </FadeUpChild>
+    </FadeUp>
   );
 }
 
-function DashboardTable() {
+function PricingCard({ title, price, period, agents, features, highlight, badge, cta = 'Start free' }) {
+  return (
+    <FadeUp>
+      <div style={{ background: highlight ? colors.bgProfit : colors.bgSurface, border: `1px solid ${highlight ? colors.accentGreenBorder : colors.borderDefault}`, borderRadius: '12px', padding: '32px', position: 'relative', transform: highlight ? 'scale(1.05)' : 'scale(1)', transition: 'all 200ms', boxShadow: highlight ? colors.shadowMd : colors.shadowSm }}>
+        {badge && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: colors.accentGreen, color: colors.bgSurface, padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', fontFamily: 'Inter, sans-serif' }}>{badge}</div>}
+        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '24px', fontWeight: '600', marginBottom: '8px', color: colors.textPrimary }}>{title}</h3>
+        <p style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '14px', color: colors.textSecondary, marginBottom: '24px' }}>{agents}</p>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '32px' }}>
+          <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '36px', fontWeight: '700', color: colors.textPrimary }}>{price}</span>
+          {period && <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '14px', color: colors.textSecondary }}>{period}</span>}
+        </div>
+        <ul style={{ marginBottom: '32px', listStyle: 'none' }}>
+          {features.map((f, i) => (
+            <li key={i} style={{ fontSize: '14px', color: colors.textSecondary, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: colors.accentGreen, fontWeight: 'bold' }}>✓</span> {f}
+            </li>
+          ))}
+        </ul>
+        <button onClick={() => window.location.href = '/signup'} style={{ width: '100%', background: highlight ? colors.accentGreen : colors.bgSurface, color: highlight ? colors.bgSurface : colors.accentGreen, border: `1px solid ${colors.accentGreen}`, padding: '12px 24px', borderRadius: '6px', fontFamily: 'Inter, sans-serif', fontSize: '14px', fontWeight: '600', cursor: 'pointer', transition: 'all 200ms' }} onMouseDown={(e) => (e.target.style.transform = 'scale(0.98)')} onMouseUp={(e) => (e.target.style.transform = 'scale(1)')}>{cta} →</button>
+      </div>
+    </FadeUp>
+  );
+}
+
+function DashboardMockupTable() {
   const agents = [
     { name: 'Research Agent', cost: 3200, tasks: 1240, value: 12800, roi: '4.0×', status: 'profitable' },
     { name: 'Writing Engine', cost: 2100, tasks: 890, value: 8900, roi: '4.2×', status: 'profitable' },
@@ -262,27 +372,27 @@ function DashboardTable() {
   ];
 
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Mono, monospace', fontSize: '13px' }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, sans-serif', fontSize: '13px' }}>
       <thead>
-        <tr style={{ borderBottom: `1px solid ${colors.border}`, color: colors.textSecondary }}>
-          <th style={{ textAlign: 'left', padding: '12px 0', fontWeight: '500' }}>Agent</th>
-          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '500' }}>Cost/mo</th>
-          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '500' }}>Tasks</th>
-          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '500' }}>Value</th>
-          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '500' }}>ROI</th>
-          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '500' }}>Status</th>
+        <tr style={{ borderBottom: `1px solid ${colors.borderDefault}`, color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>
+          <th style={{ textAlign: 'left', padding: '12px 0', fontWeight: '600', fontSize: '12px', textTransform: 'uppercase' }}>Agent</th>
+          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '600', fontSize: '12px', textTransform: 'uppercase' }}>Cost/mo</th>
+          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '600', fontSize: '12px', textTransform: 'uppercase' }}>Tasks</th>
+          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '600', fontSize: '12px', textTransform: 'uppercase' }}>Value</th>
+          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '600', fontSize: '12px', textTransform: 'uppercase' }}>ROI</th>
+          <th style={{ textAlign: 'right', padding: '12px 0', fontWeight: '600', fontSize: '12px', textTransform: 'uppercase' }}>Status</th>
         </tr>
       </thead>
       <tbody>
         {agents.map((agent, i) => (
-          <tr key={i} style={{ borderBottom: `1px solid ${colors.border}` }} onMouseEnter={(e) => (e.currentTarget.style.background = colors.elevated)} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-            <td style={{ padding: '16px 0', color: colors.textPrimary }}>{agent.name}</td>
-            <td style={{ textAlign: 'right', padding: '16px 0', color: colors.textSecondary }}>${agent.cost.toLocaleString()}</td>
-            <td style={{ textAlign: 'right', padding: '16px 0', color: colors.textSecondary }}>{agent.tasks.toLocaleString()}</td>
-            <td style={{ textAlign: 'right', padding: '16px 0', color: colors.accentGreen }}>${agent.value.toLocaleString()}</td>
-            <td style={{ textAlign: 'right', padding: '16px 0', color: agent.status === 'profitable' ? colors.accentGreen : agent.status === 'watch' ? colors.warningAmber : colors.dangerRed }}>{agent.roi}</td>
+          <tr key={i} style={{ borderBottom: `1px solid ${colors.borderDefault}`, transition: 'background 150ms' }} onMouseEnter={(e) => (e.currentTarget.style.background = colors.bgSubtle)} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+            <td style={{ padding: '16px 0', color: colors.textPrimary, fontWeight: '500' }}>{agent.name}</td>
+            <td style={{ textAlign: 'right', padding: '16px 0', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>${agent.cost.toLocaleString()}</td>
+            <td style={{ textAlign: 'right', padding: '16px 0', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>{agent.tasks.toLocaleString()}</td>
+            <td style={{ textAlign: 'right', padding: '16px 0', color: colors.accentGreen, fontFamily: 'IBM Plex Mono, monospace', fontWeight: '500' }}>${agent.value.toLocaleString()}</td>
+            <td style={{ textAlign: 'right', padding: '16px 0', color: agent.status === 'profitable' ? colors.accentGreen : agent.status === 'watch' ? colors.warningAmber : colors.dangerRed, fontFamily: 'IBM Plex Mono, monospace', fontWeight: '500' }}>{agent.roi}</td>
             <td style={{ textAlign: 'right', padding: '16px 0' }}>
-              <span style={{ padding: '4px 12px', borderRadius: '4px', background: agent.status === 'profitable' ? colors.accentGreenDim : agent.status === 'watch' ? colors.warningAmberDim : colors.dangerRedDim, color: agent.status === 'profitable' ? colors.accentGreen : agent.status === 'watch' ? colors.warningAmber : colors.dangerRed }}>
+              <span style={{ padding: '4px 12px', borderRadius: '4px', background: agent.status === 'profitable' ? colors.bgProfit : agent.status === 'watch' ? colors.bgWarning : colors.bgLoss, color: agent.status === 'profitable' ? colors.accentGreen : agent.status === 'watch' ? colors.warningAmber : colors.dangerRed, fontFamily: 'Inter, sans-serif', fontWeight: '500', fontSize: '12px' }}>
                 {agent.status === 'profitable' ? '✓ Profitable' : agent.status === 'watch' ? '⚠ Watch' : '✗ Losing'}
               </span>
             </td>
