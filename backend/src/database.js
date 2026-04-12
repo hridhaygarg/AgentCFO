@@ -4,18 +4,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY;
 
 let supabase = null;
 
 export function initDatabase() {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.warn('Supabase credentials not set. Running in mock mode.');
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.warn('⚠️ Supabase credentials not set. Running in mock mode.');
     return;
   }
 
-  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  console.log('Database initialized with Supabase');
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  console.log('✅ Database initialized with Supabase');
 }
 
 export async function logAPICall(callData) {
