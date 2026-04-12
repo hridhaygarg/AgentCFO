@@ -22,7 +22,29 @@ const app = express();
 const PORT = process.env.PORT;
 const blockedAgents = new Set();
 
-app.use(cors());
+// CORS configuration
+const allowedOrigins = [
+  'https://layeroi.com',
+  'https://www.layeroi.com',
+  'https://app.layeroi.com',
+  'https://api.layeroi.com',
+  'http://localhost:3000',
+  'http://localhost:3001',
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Agent-Name'],
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 

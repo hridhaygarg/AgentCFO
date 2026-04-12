@@ -3,7 +3,7 @@ import { useState } from 'react'
 export default function OnboardingPage() {
   const [copied, setCopied] = useState(false)
 
-  const proxyUrl = 'https://agentcfo-production.up.railway.app'
+  const proxyUrl = 'https://api.layeroi.com'
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text)

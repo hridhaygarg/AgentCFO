@@ -41,7 +41,7 @@ export default function Signup() {
     }
 
     try {
-      const res = await fetch('https://agentcfo-production.up.railway.app/api/signup', {
+      const res = await fetch('https://api.layeroi.com/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -200,7 +200,7 @@ export default function Signup() {
               <div style={{ background: colors.bgProfit, border: `1px solid ${colors.accentGreenBorder}`, borderRadius: '8px', padding: '16px', marginBottom: '32px', textAlign: 'left' }}>
                 <div style={{ fontSize: '14px', color: colors.textPrimary, fontWeight: '600', marginBottom: '12px' }}>Next: Connect your first agent</div>
                 <code style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '12px', color: colors.textSecondary, backgroundColor: 'rgba(0,0,0,0.02)', padding: '8px', borderRadius: '4px', display: 'block', whiteSpace: 'pre-wrap' }}>
-{`baseURL: 'https://agentcfo-production.up.railway.app'
+{`baseURL: 'https://api.layeroi.com'
 apiKey: '${apiKey}'`}
                 </code>
               </div>

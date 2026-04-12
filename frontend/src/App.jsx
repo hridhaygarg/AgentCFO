@@ -37,7 +37,7 @@ export default function App() {
   useEffect(() => {
     const checkProxy = async () => {
       try {
-        const res = await fetch('https://agentcfo-production.up.railway.app/health')
+        const res = await fetch('https://api.layeroi.com/health')
         setIsProxyActive(res.ok)
       } catch {
         setIsProxyActive(false)

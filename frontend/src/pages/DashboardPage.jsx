@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Dashboard from '../components/Dashboard'
 import AgentMetrics from '../components/AgentMetrics'
 
-const API_BASE = 'https://agentcfo-production.up.railway.app'
+const API_BASE = 'https://api.layeroi.com'
 
 export default function DashboardPage() {
   const [costs, setCosts] = useState({})

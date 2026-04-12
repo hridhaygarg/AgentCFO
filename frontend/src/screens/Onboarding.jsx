@@ -17,7 +17,7 @@ export default function Onboarding() {
   const [copied, setCopied] = useState(false);
   const codeBlock = `const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  baseURL: 'https://agentcfo-production.up.railway.app'
+  baseURL: 'https://api.layeroi.com'
 })`;
 
   return (

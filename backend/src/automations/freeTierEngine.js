@@ -25,7 +25,7 @@ export async function createFreeUser(name, email, company) {
     html: `
       <h1>Welcome to Layer ROI, ${name}!</h1>
       <p>Your API key is ready. Update one line of code in your agent:</p>
-      <pre>baseURL: 'https://agentcfo-production.up.railway.app'</pre>
+      <pre>baseURL: 'https://api.layeroi.com'</pre>
       <p>Your API key: <code>${apiKey}</code></p>
       <p>You have 2 agents and 14 days of history on the free plan. <a href="https://layeroi.com">See your dashboard</a></p>
     `,
