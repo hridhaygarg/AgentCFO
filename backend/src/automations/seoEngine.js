@@ -85,7 +85,7 @@ Return ONLY the HTML content, no markdown or extra text.`;
   // Commit and push
   execSync(`git add ${filename}`);
   execSync(`git commit -m "content: publish SEO article - ${title}"`);
-  execSync(`git push https://hridhaygarg:${process.env.GITHUB_TOKEN}@github.com/hridhaygarg/AgentCFO.git main`);
+  execSync(`git push https://hridhaygarg:${process.env.GITHUB_TOKEN}@github.com/hridhaygarg/LayerROI.git main`);
 
   // Log to database
   await logContent({
