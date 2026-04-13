@@ -4,6 +4,7 @@ import { useCountUp } from '../hooks/useCountUp';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { AnimatedSection } from '../components/AnimatedSection';
 import '../styles/landing-responsive.css';
+import '../styles/micro-interactions.css';
 
 const colors = {
   bgPrimary: '#fafaf9',

@@ -1,0 +1,472 @@
+/* PART 5: Micro Interactions and Polish */
+
+/* ===== BUTTON INTERACTIONS ===== */
+button,
+a[href*="/signup"],
+a[href*="/login"],
+[role="button"] {
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Button press effect */
+button:active,
+a[href*="/signup"]:active,
+[role="button"]:active {
+  transform: scale(0.95);
+}
+
+/* Button hover lift */
+button:not(:disabled):hover,
+a[href*="/signup"]:hover,
+[role="button"]:hover {
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== FORM INPUT INTERACTIONS ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* Input focus state with glow */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Input placeholder animation */
+input::placeholder,
+textarea::placeholder {
+  transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+input:focus::placeholder,
+textarea:focus::placeholder {
+  opacity: 0.5;
+}
+
+/* ===== LINK INTERACTIONS ===== */
+a {
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* Underline animation on hover */
+a:not([href*="/signup"]):not([href*="/login"]):hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: currentColor;
+  animation: slideIn 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideIn {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+}
+
+/* ===== BADGE AND STATUS ANIMATIONS ===== */
+.status-badge,
+[style*="borderRadius: '12px'"][style*="padding: '4px"] {
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.status-profitable {
+  animation: statusGlow 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes statusGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0);
+  }
+}
+
+/* ===== PROGRESS BAR ANIMATIONS ===== */
+[role="progressbar"],
+progress {
+  transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Progress bar color transition based on percentage */
+progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #16a34a, #15803d);
+  transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+progress::-moz-progress-bar {
+  background: linear-gradient(90deg, #16a34a, #15803d);
+  transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== TOGGLE SWITCH ANIMATIONS ===== */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  background: #e5e7eb;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  padding: 0;
+}
+
+.toggle-switch.active {
+  background: #16a34a;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: left 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch.active::after {
+  left: 26px;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+}
+
+.toggle-switch:hover::after {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== COPY TO CLIPBOARD ANIMATION ===== */
+.copy-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.copy-button::before {
+  content: attr(data-copied);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #16a34a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.copy-button.copied::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== MODAL AND DRAWER ANIMATIONS ===== */
+.modal-overlay {
+  animation: fadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.modal {
+  animation: slideUp 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.bottom-drawer {
+  animation: slideInUp 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Modal close animation */
+.modal-overlay.closing {
+  animation: fadeOut 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.modal.closing {
+  animation: slideDown 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ===== NOTIFICATION BELL SWING ===== */
+.notification-bell {
+  animation: swing 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  transform-origin: top center;
+}
+
+.notification-bell.active {
+  animation: swingBounce 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes swing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+}
+
+@keyframes swingBounce {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(20deg);
+  }
+  75% {
+    transform: rotate(-20deg);
+  }
+}
+
+/* ===== TABLE ROW EXPAND ANIMATION ===== */
+tr.expandable {
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+tr.expandable:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+tr.expandable.expanded {
+  background: rgba(22, 163, 74, 0.05);
+}
+
+tr.expandable-details {
+  animation: expandRow 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes expandRow {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+/* ===== TOOLTIP ANIMATION ===== */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-content {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1000;
+  background: #1f2937;
+  color: white;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.tooltip:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== LOADING SPINNER ===== */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== BOUNCE ANIMATION ===== */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.bounce {
+  animation: bounce 600ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* ===== SHAKE ANIMATION (for errors) ===== */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.shake {
+  animation: shake 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== SMOOTH COLOR TRANSITIONS ===== */
+.color-transition {
+  transition: background-color 400ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 400ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== RIPPLE EFFECT ===== */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.ripple:active::after {
+  animation: rippleEffect 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rippleEffect {
+  from {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  to {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+/* ===== PARALLAX SCROLLING ===== */
+.parallax {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* ===== SMOOTH SCROLL ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== FOCUS VISIBLE for keyboard navigation ===== */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #16a34a;
+  outline-offset: 2px;
+}
+
+/* ===== PREFERS REDUCED MOTION - Respect user preferences ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== DARK MODE MICRO INTERACTIONS ===== */
+@media (prefers-color-scheme: dark) {
+  /* Adjust for dark mode if needed */
+  button:hover {
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+  }
+}

@@ -8,6 +8,7 @@ import Onboarding from './screens/Onboarding'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
 import Landing from './pages/Landing'
+import './styles/micro-interactions.css'
 
 const colors = {
   bgPrimary: '#fafaf9',
