@@ -135,6 +135,23 @@ const migrations = [
       UNIQUE(organisation_id, forecast_month)
     );
     CREATE INDEX IF NOT EXISTS spend_forecasts_org_idx ON spend_forecasts(organisation_id);`
+  },
+  {
+    name: 'Migration 11: Create users table',
+    sql: `CREATE TABLE IF NOT EXISTS users (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password_hash VARCHAR(255),
+      name VARCHAR(255),
+      company VARCHAR(255),
+      api_key VARCHAR(255) UNIQUE,
+      org_id UUID REFERENCES organisations(id) ON DELETE SET NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS users_email_idx ON users(email);
+    CREATE INDEX IF NOT EXISTS users_org_idx ON users(org_id);
+    CREATE INDEX IF NOT EXISTS users_api_key_idx ON users(api_key);`
   }
 ];
 

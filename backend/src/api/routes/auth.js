@@ -63,26 +63,21 @@ router.post('/auth/signup', async (req, res) => {
       return res.status(409).json({ error: 'User already exists' });
     }
 
-    // Create user in database
-    let user = await createUser({
-      email,
-      name,
-      company,
-    });
-
-    // If database creation fails, create in-memory user object for API compatibility
-    if (!user) {
-      const userId = crypto.randomUUID();
-      const orgId = crypto.randomUUID();
-      user = {
-        id: userId,
+    // Create user in database - must persist or fail
+    let user;
+    try {
+      user = await createUser({
         email,
         name,
         company,
-        org_id: orgId,
-        created_at: new Date().toISOString(),
-      };
-      logger.warn('User created in-memory (database write failed)', { email });
+      });
+    } catch (err) {
+      logger.error('User creation failed - database error', { email, error: err.message });
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create user account. Please try again later.',
+        details: process.env.NODE_ENV === 'development' ? err.message : undefined
+      });
     }
 
     const apiKey = `sk-${crypto.randomBytes(16).toString('hex')}`;
@@ -108,7 +103,7 @@ router.post('/auth/signup', async (req, res) => {
       message: 'Account created successfully'
     });
 
-    logger.info('New user signed up', { email, company, persisted: !!user.created_at });
+    logger.info('New user signed up', { email, company, userId: user.id, orgId: user.org_id });
   } catch (err) {
     logger.error('Signup failed', err);
     res.status(500).json({ error: err.message });

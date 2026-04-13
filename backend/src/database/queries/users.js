@@ -3,11 +3,31 @@ import { logger } from '../../utils/logger.js';
 import crypto from 'crypto';
 
 export async function createUser(userData) {
+  const { email, name, company } = userData;
+
   try {
-    const { email, name, company } = userData;
+    // First, create organisation for the user
+    const orgSlug = company.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50);
     const orgId = crypto.randomUUID();
 
-    const { data, error } = await supabase
+    const { error: orgError } = await supabase
+      .from('organisations')
+      .insert([
+        {
+          id: orgId,
+          name: company,
+          slug: `${orgSlug}-${Date.now()}`,
+          created_by: null, // Will be updated to user_id after user creation
+        }
+      ]);
+
+    if (orgError) {
+      logger.error('Failed to create organisation', orgError);
+      throw new Error(`Organisation creation failed: ${orgError.message}`);
+    }
+
+    // Then create user
+    const { data, error: userError } = await supabase
       .from('users')
       .insert([
         {
@@ -15,16 +35,23 @@ export async function createUser(userData) {
           name,
           company,
           org_id: orgId,
-          created_at: new Date().toISOString(),
         }
       ])
       .select();
 
-    if (error) throw error;
-    return data?.[0] || null;
+    if (userError) {
+      logger.error('Failed to create user', userError);
+      throw new Error(`User creation failed: ${userError.message}`);
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error('User creation returned no data');
+    }
+
+    return data[0];
   } catch (error) {
-    logger.error('Create user failed', error);
-    return null;
+    logger.error('Create user failed', { email, error: error.message });
+    throw error; // Propagate error instead of swallowing it
   }
 }
 
