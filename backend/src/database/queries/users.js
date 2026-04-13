@@ -61,6 +61,22 @@ export async function createUser(userData) {
       throw new Error(`User update failed: ${updateError.message}`);
     }
 
+    // Step 4: Add user to organisation_members as owner
+    const { error: memberError } = await supabase
+      .from('organisation_members')
+      .insert([
+        {
+          organisation_id: orgId,
+          user_id: userId,
+          role: 'owner',
+        }
+      ]);
+
+    if (memberError) {
+      logger.error('Failed to add user to organisation_members', memberError);
+      throw new Error(`Organisation membership failed: ${memberError.message}`);
+    }
+
     return updatedUsers?.[0] || createdUsers[0];
   } catch (error) {
     logger.error('Create user failed', { email, error: error.message });
