@@ -3,6 +3,7 @@ import { useScrollProgress } from '../hooks/useScrollProgress';
 import { useCountUp } from '../hooks/useCountUp';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { AnimatedSection } from '../components/AnimatedSection';
+import '../styles/landing-responsive.css';
 
 const colors = {
   bgPrimary: '#fafaf9',

@@ -1,0 +1,259 @@
+/* PART 4: Responsive Design for Landing Page */
+
+/* ===== MOBILE: 375px - 767px ===== */
+@media (max-width: 767px) {
+  /* Navigation */
+  nav {
+    padding: 0 16px !important;
+  }
+
+  nav > div {
+    padding: 0 !important;
+  }
+
+  nav button,
+  nav a {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+
+  /* Hero Section */
+  section:first-of-type {
+    padding: 48px 16px !important;
+  }
+
+  h1 {
+    font-size: 36px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 12px !important;
+  }
+
+  h2 {
+    font-size: 28px !important;
+  }
+
+  p {
+    font-size: 16px !important;
+  }
+
+  /* Stat Bar */
+  [style*="gridTemplateColumns: repeat(4"]  {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  /* Problem Cards */
+  [style*="gridTemplateColumns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* How It Works */
+  [style*="gridTemplateColumns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Features Grid */
+  [style*="gridTemplateColumns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ROI Calculator */
+  [style*="gridTemplateColumns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  [style*="gridTemplateColumns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Pricing Cards */
+  [style*="gridTemplateColumns: repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Comparison Table */
+  table {
+    font-size: 12px !important;
+  }
+
+  table th,
+  table td {
+    padding: 8px !important;
+  }
+
+  /* CTA Section */
+  [style*="textAlign: center"] h2 {
+    font-size: 28px !important;
+  }
+
+  /* General padding */
+  section {
+    padding: 48px 16px !important;
+  }
+
+  /* Button scaling */
+  a[href*="/signup"],
+  button {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* ===== TABLET: 768px - 1023px ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Navigation */
+  nav {
+    padding: 0 24px !important;
+  }
+
+  /* Hero Section */
+  section:first-of-type {
+    padding: 64px 24px !important;
+  }
+
+  h1 {
+    font-size: 48px !important;
+  }
+
+  h2 {
+    font-size: 36px !important;
+  }
+
+  /* Stat Bar */
+  [style*="gridTemplateColumns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 30px !important;
+  }
+
+  /* Problem Cards - stay 3 columns */
+  /* How It Works - stay 3 columns */
+  /* Features Grid */
+  [style*="gridTemplateColumns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Pricing Cards */
+  [style*="gridTemplateColumns: repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* General padding */
+  section {
+    padding: 64px 24px !important;
+  }
+}
+
+/* ===== DESKTOP: 1024px+ ===== */
+@media (min-width: 1024px) {
+  /* Full layouts stay as designed */
+  section {
+    padding: 96px 40px !important;
+  }
+}
+
+/* ===== RESPONSIVE UTILITIES ===== */
+
+/* Hide elements on mobile */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  /* Reduce spacing */
+  [style*="gap: '40px'"] {
+    gap: 16px !important;
+  }
+
+  [style*="gap: '32px'"] {
+    gap: 16px !important;
+  }
+
+  [style*="gap: '48px'"] {
+    gap: 24px !important;
+  }
+
+  /* Adjust card padding */
+  [style*="padding: '24px'"] {
+    padding: 16px !important;
+  }
+
+  [style*="padding: '48px'"] {
+    padding: 24px !important;
+  }
+
+  /* Navigation hamburger */
+  nav div:last-child {
+    gap: 12px !important;
+  }
+
+  /* Hero CTA buttons stack */
+  [style*="display: 'flex'"][style*="gap: '16px'"] {
+    flex-direction: column !important;
+  }
+
+  a[href*="/signup"],
+  button[type="button"] {
+    width: 100% !important;
+  }
+
+  /* Table horizontal scroll */
+  table {
+    min-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Reduce font sizes */
+  [style*="fontSize: '20px'"] {
+    font-size: 16px !important;
+  }
+
+  [style*="fontSize: '18px'"] {
+    font-size: 14px !important;
+  }
+
+  [style*="fontSize: '16px'"] {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .hide-tablet-down {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+/* ===== SAFE AREA INSET for notched devices ===== */
+@supports (padding: max(0px)) {
+  section {
+    padding-left: max(40px, env(safe-area-inset-left));
+    padding-right: max(40px, env(safe-area-inset-right));
+  }
+
+  @media (max-width: 767px) {
+    section {
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+    }
+  }
+}
+
+/* ===== PREFERS REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+  /* Keep light theme as designed - optional override here */
+}

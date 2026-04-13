@@ -26,6 +26,8 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState('overview')
   const [isProxyActive, setIsProxyActive] = useState(false)
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   // Track page views in Google Analytics
   useEffect(() => {
@@ -56,6 +58,18 @@ export default function App() {
     checkProxy()
     const interval = setInterval(checkProxy, 30000)
     return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   const screens = {
@@ -100,12 +114,49 @@ export default function App() {
   // Dashboard layout for /dashboard and all dashboard routes
   if (isDashboard) {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: colors.bgPrimary, fontFamily: 'Inter, sans-serif' }}>
-        {/* Sidebar */}
-        <Sidebar active={currentScreen} onNavigate={setCurrentScreen} colors={colors} />
+      <div style={{ display: 'flex', minHeight: '100vh', background: colors.bgPrimary, fontFamily: 'Inter, sans-serif', flexDirection: isMobile ? 'column' : 'row' }}>
+        {/* Sidebar - Hidden on mobile, shown on desktop */}
+        {!isMobile && <Sidebar active={currentScreen} onNavigate={setCurrentScreen} colors={colors} />}
+
+        {/* Mobile Overlay for Menu */}
+        {isMobile && isMobileMenuOpen && (
+          <div
+            style={{
+              position: 'fixed',
+              top: '64px',
+              left: 0,
+              right: 0,
+              bottom: '64px',
+              background: 'rgba(0,0,0,0.3)',
+              zIndex: 39,
+              animation: 'fadeIn 200ms cubic-bezier(0.16,1,0.3,1) both',
+            }}
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Mobile Menu Drawer */}
+        {isMobile && isMobileMenuOpen && (
+          <div
+            style={{
+              position: 'fixed',
+              top: '64px',
+              left: 0,
+              width: '240px',
+              bottom: '64px',
+              background: colors.bgSurface,
+              borderRight: `1px solid ${colors.borderDefault}`,
+              zIndex: 40,
+              overflowY: 'auto',
+              animation: 'slideInLeft 300ms cubic-bezier(0.16,1,0.3,1) both',
+            }}
+          >
+            <Sidebar active={currentScreen} onNavigate={(screen) => { setCurrentScreen(screen); setIsMobileMenuOpen(false); }} colors={colors} />
+          </div>
+        )}
 
         {/* Main content */}
-        <div style={{ flex: 1, marginLeft: '240px' }}>
+        <div style={{ flex: 1, marginLeft: isMobile ? '0' : '240px', marginBottom: isMobile ? '64px' : '0', display: 'flex', flexDirection: 'column' }}>
           {/* Top bar */}
           <div style={{
             height: '64px',
@@ -114,24 +165,44 @@ export default function App() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 40px',
+            padding: isMobile ? '0 12px' : '0 40px',
             position: 'sticky',
             top: 0,
             zIndex: 50,
             boxShadow: colors.shadowSm,
           }}>
+            {isMobile && (
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  color: colors.textPrimary,
+                  padding: '8px',
+                  transition: 'all 200ms cubic-bezier(0.16,1,0.3,1)',
+                }}
+                onMouseEnter={(e) => e.target.style.background = colors.bgSubtle}
+                onMouseLeave={(e) => e.target.style.background = 'none'}
+              >
+                ☰
+              </button>
+            )}
             <h1 style={{
               fontFamily: 'Playfair Display, serif',
-              fontSize: '20px',
+              fontSize: isMobile ? '16px' : '20px',
               fontWeight: '600',
               color: colors.textPrimary,
+              flex: 1,
+              marginLeft: isMobile ? '12px' : '0',
             }}>
               {screenNames[currentScreen] || 'Dashboard'}
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <span style={{ fontSize: '12px', color: colors.textTertiary, fontFamily: 'IBM Plex Mono, monospace' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '16px' }}>
+              {!isMobile && <span style={{ fontSize: '12px', color: colors.textTertiary, fontFamily: 'IBM Plex Mono, monospace' }}>
                 {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </span>
+              </span>}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <div style={{
                   width: '8px',
@@ -140,27 +211,115 @@ export default function App() {
                   borderRadius: '50%',
                   animation: isProxyActive ? 'pulse 2s infinite' : 'none',
                 }} />
-                <span style={{ fontSize: '11px', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>
+                {!isMobile && <span style={{ fontSize: '11px', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>
                   {isProxyActive ? 'Live' : 'Offline'}
-                </span>
+                </span>}
               </div>
             </div>
           </div>
 
           {/* Main content area */}
-          <main style={{ padding: '40px', minHeight: 'calc(100vh - 64px)' }}>
+          <main style={{ padding: isMobile ? '20px' : '40px', minHeight: 'calc(100vh - 128px)', flex: 1 }}>
             <CurrentScreen />
           </main>
         </div>
+
+        {/* Mobile Bottom Navigation */}
+        {isMobile && (
+          <div style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '64px',
+            background: colors.bgSurface,
+            borderTop: `1px solid ${colors.borderDefault}`,
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            zIndex: 60,
+            boxShadow: `0 -2px 8px ${colors.shadowSm}`,
+            animation: 'slideInUp 300ms cubic-bezier(0.16,1,0.3,1) both',
+          }}>
+            {Object.entries(screenNames).map(([key, name]) => (
+              <button
+                key={key}
+                onClick={() => { setCurrentScreen(key); setIsMobileMenuOpen(false); }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: currentScreen === key ? colors.accentGreen : colors.textSecondary,
+                  fontSize: '11px',
+                  fontWeight: currentScreen === key ? '600' : '500',
+                  padding: '8px',
+                  transition: 'all 200ms cubic-bezier(0.16,1,0.3,1)',
+                  borderTop: currentScreen === key ? `3px solid ${colors.accentGreen}` : 'none',
+                }}
+                onMouseEnter={(e) => !e.currentTarget.style.borderTop && (e.currentTarget.style.color = colors.textPrimary)}
+                onMouseLeave={(e) => !e.currentTarget.style.borderTop && (e.currentTarget.style.color = colors.textSecondary)}
+              >
+                <span style={{ fontSize: '16px', marginBottom: '2px' }}>
+                  {key === 'overview' && '📊'}
+                  {key === 'agents' && '🤖'}
+                  {key === 'budget' && '💰'}
+                  {key === 'report' && '📈'}
+                  {key === 'onboarding' && '🚀'}
+                </span>
+                {name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     )
   }
 
   // Default to dashboard
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: colors.bgPrimary, fontFamily: 'Inter, sans-serif' }}>
-      <Sidebar active={currentScreen} onNavigate={setCurrentScreen} colors={colors} />
-      <div style={{ flex: 1, marginLeft: '240px' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: colors.bgPrimary, fontFamily: 'Inter, sans-serif', flexDirection: isMobile ? 'column' : 'row' }}>
+      {/* Sidebar - Hidden on mobile */}
+      {!isMobile && <Sidebar active={currentScreen} onNavigate={setCurrentScreen} colors={colors} />}
+
+      {/* Mobile Overlay */}
+      {isMobile && isMobileMenuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '64px',
+            left: 0,
+            right: 0,
+            bottom: '64px',
+            background: 'rgba(0,0,0,0.3)',
+            zIndex: 39,
+          }}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Menu */}
+      {isMobile && isMobileMenuOpen && (
+        <div style={{
+          position: 'fixed',
+          top: '64px',
+          left: 0,
+          width: '240px',
+          bottom: '64px',
+          background: colors.bgSurface,
+          borderRight: `1px solid ${colors.borderDefault}`,
+          zIndex: 40,
+          overflowY: 'auto',
+        }}>
+          <Sidebar active={currentScreen} onNavigate={(screen) => { setCurrentScreen(screen); setIsMobileMenuOpen(false); }} colors={colors} />
+        </div>
+      )}
+
+      <div style={{ flex: 1, marginLeft: isMobile ? '0' : '240px', marginBottom: isMobile ? '64px' : '0', display: 'flex', flexDirection: 'column' }}>
         <div style={{
           height: '64px',
           background: colors.bgSurface,
@@ -168,24 +327,41 @@ export default function App() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 40px',
+          padding: isMobile ? '0 12px' : '0 40px',
           position: 'sticky',
           top: 0,
           zIndex: 50,
           boxShadow: colors.shadowSm,
         }}>
+          {isMobile && (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer',
+                color: colors.textPrimary,
+                padding: '8px',
+              }}
+            >
+              ☰
+            </button>
+          )}
           <h1 style={{
             fontFamily: 'Playfair Display, serif',
-            fontSize: '20px',
+            fontSize: isMobile ? '16px' : '20px',
             fontWeight: '600',
             color: colors.textPrimary,
+            flex: 1,
+            marginLeft: isMobile ? '12px' : '0',
           }}>
             {screenNames[currentScreen] || 'Dashboard'}
           </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '12px', color: colors.textTertiary, fontFamily: 'IBM Plex Mono, monospace' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '16px' }}>
+            {!isMobile && <span style={{ fontSize: '12px', color: colors.textTertiary, fontFamily: 'IBM Plex Mono, monospace' }}>
               {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-            </span>
+            </span>}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{
                 width: '8px',
@@ -194,16 +370,64 @@ export default function App() {
                 borderRadius: '50%',
                 animation: isProxyActive ? 'pulse 2s infinite' : 'none',
               }} />
-              <span style={{ fontSize: '11px', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>
+              {!isMobile && <span style={{ fontSize: '11px', color: colors.textSecondary, fontFamily: 'IBM Plex Mono, monospace' }}>
                 {isProxyActive ? 'Live' : 'Offline'}
-              </span>
+              </span>}
             </div>
           </div>
         </div>
-        <main style={{ padding: '40px', minHeight: 'calc(100vh - 64px)' }}>
+        <main style={{ padding: isMobile ? '20px' : '40px', minHeight: 'calc(100vh - 128px)', flex: 1 }}>
           <CurrentScreen />
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      {isMobile && (
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '64px',
+          background: colors.bgSurface,
+          borderTop: `1px solid ${colors.borderDefault}`,
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          zIndex: 60,
+        }}>
+          {Object.entries(screenNames).map(([key, name]) => (
+            <button
+              key={key}
+              onClick={() => { setCurrentScreen(key); setIsMobileMenuOpen(false); }}
+              style={{
+                background: 'none',
+                border: 'none',
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: currentScreen === key ? colors.accentGreen : colors.textSecondary,
+                fontSize: '11px',
+                fontWeight: currentScreen === key ? '600' : '500',
+                padding: '8px',
+                borderTop: currentScreen === key ? `3px solid ${colors.accentGreen}` : 'none',
+              }}
+            >
+              <span style={{ fontSize: '16px', marginBottom: '2px' }}>
+                {key === 'overview' && '📊'}
+                {key === 'agents' && '🤖'}
+                {key === 'budget' && '💰'}
+                {key === 'report' && '📈'}
+                {key === 'onboarding' && '🚀'}
+              </span>
+              {name}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
