@@ -1,14 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import Sidebar from './layouts/Sidebar'
-import Overview from './screens/Overview'
-import Agents from './screens/Agents'
-import Budget from './screens/Budget'
-import Report from './screens/Report'
-import Onboarding from './screens/Onboarding'
-import Signup from './pages/Signup'
-import Login from './pages/Login'
 import Landing from './pages/Landing'
 import './styles/micro-interactions.css'
+
+// Lazy load dashboard screens for better performance
+const Overview = lazy(() => import('./screens/Overview'))
+const Agents = lazy(() => import('./screens/Agents'))
+const Budget = lazy(() => import('./screens/Budget'))
+const Report = lazy(() => import('./screens/Report'))
+const Onboarding = lazy(() => import('./screens/Onboarding'))
+const Signup = lazy(() => import('./pages/Signup'))
+const Login = lazy(() => import('./pages/Login'))
+
+// Loading component
+const LoadingScreen = () => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ fontSize: '32px', marginBottom: '16px', animation: 'spin 1s linear infinite' }}>⟳</div>
+      <p style={{ color: '#6b7280' }}>Loading...</p>
+    </div>
+  </div>
+)
 
 const colors = {
   bgPrimary: '#fafaf9',
@@ -97,12 +109,12 @@ export default function App() {
 
   // Show signup page if on /signup route
   if (currentPath === '/signup') {
-    return <Signup onSuccess={() => window.location.href = '/dashboard'} />
+    return <Suspense fallback={<LoadingScreen />}><Signup onSuccess={() => window.location.href = '/dashboard'} /></Suspense>
   }
 
   // Show login page if on /login route
   if (currentPath === '/login') {
-    return <Login />
+    return <Suspense fallback={<LoadingScreen />}><Login /></Suspense>
   }
 
   // Check authentication for dashboard routes
@@ -221,7 +233,9 @@ export default function App() {
 
           {/* Main content area */}
           <main style={{ padding: isMobile ? '20px' : '40px', minHeight: 'calc(100vh - 128px)', flex: 1 }}>
-            <CurrentScreen />
+            <Suspense fallback={<LoadingScreen />}>
+              <CurrentScreen />
+            </Suspense>
           </main>
         </div>
 
@@ -378,7 +392,9 @@ export default function App() {
           </div>
         </div>
         <main style={{ padding: isMobile ? '20px' : '40px', minHeight: 'calc(100vh - 128px)', flex: 1 }}>
-          <CurrentScreen />
+          <Suspense fallback={<LoadingScreen />}>
+            <CurrentScreen />
+          </Suspense>
         </main>
       </div>
 
