@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Dashboard from '../components/Dashboard'
 import AgentMetrics from '../components/AgentMetrics'
+import { AnimatedSection } from '../components/AnimatedSection'
 import { api } from '../config/api'
 
 export default function DashboardPage() {
@@ -45,7 +46,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="container py-12 text-center">
+      <div className="container py-12 text-center" style={{ animation: 'fadeIn 400ms cubic-bezier(0.16,1,0.3,1) both' }}>
         <p className="text-gray-600">Loading dashboard...</p>
       </div>
     )
@@ -54,7 +55,7 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="container py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4" style={{ animation: 'fadeUp 400ms cubic-bezier(0.16,1,0.3,1) both' }}>
           <p className="text-red-800">Error: {error}</p>
           <p className="text-red-600 text-sm mt-2">Make sure the backend server is running</p>
         </div>
@@ -63,18 +64,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container py-12">
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h2>
-        <p className="text-gray-600">Monitor AI agent costs and usage in real-time</p>
-      </div>
+    <div className="container py-12" style={{ animation: 'fadeIn 600ms cubic-bezier(0.16,1,0.3,1) both' }}>
+      <AnimatedSection animation="fadeUp" delay={0}>
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h2>
+          <p className="text-gray-600">Monitor AI agent costs and usage in real-time</p>
+        </div>
+      </AnimatedSection>
 
-      <Dashboard costs={costs} />
+      <AnimatedSection animation="fadeUp" delay={80}>
+        <Dashboard costs={costs} />
+      </AnimatedSection>
 
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Agent Metrics</h2>
-        <AgentMetrics agents={agents} />
-      </div>
+      <AnimatedSection animation="fadeUp" delay={160}>
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Agent Metrics</h2>
+          <AgentMetrics agents={agents} />
+        </div>
+      </AnimatedSection>
     </div>
   )
 }
