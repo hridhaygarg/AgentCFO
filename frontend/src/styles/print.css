@@ -1,0 +1,315 @@
+/* Print Styles for Reports and Documents */
+
+@media print {
+  /* Hide UI elements that aren't needed in print */
+  nav,
+  [role="navigation"],
+  button:not(.print-only),
+  .no-print,
+  [class*="sidebar"],
+  [class*="navbar"],
+  .mobile-bottom-nav,
+  .hamburger-menu,
+  svg.icon,
+  .tooltip,
+  .tooltip-content {
+    display: none !important;
+  }
+
+  /* Body and general layout */
+  body {
+    background: white !important;
+    color: #111827 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.5;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Page setup */
+  html {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Containers and sections */
+  main,
+  [role="main"],
+  .print-area {
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    page-break-after: auto;
+  }
+
+  /* Headings */
+  h1 {
+    font-size: 24px;
+    margin: 20px 0 10px;
+    page-break-after: avoid;
+    color: #111827;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin: 15px 0 8px;
+    page-break-after: avoid;
+    color: #111827;
+  }
+
+  h3 {
+    font-size: 16px;
+    margin: 12px 0 6px;
+    page-break-after: avoid;
+    color: #111827;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: avoid;
+    margin: 15px 0;
+  }
+
+  thead {
+    background: #f5f5f4 !important;
+    page-break-after: avoid;
+  }
+
+  th {
+    background: #f5f5f4 !important;
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  td {
+    border: 1px solid #e5e7eb;
+    padding: 8px 10px;
+    color: #111827;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Cards and boxes */
+  .card,
+  [style*="border-radius"],
+  [style*="box-shadow"] {
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin-bottom: 15px;
+    padding: 15px;
+  }
+
+  /* Links */
+  a {
+    color: #0066cc;
+    text-decoration: underline;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Metrics and important numbers */
+  .metric,
+  [style*="fontSize: '36px'"],
+  [style*="fontSize: '48px'"] {
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  /* Forms */
+  input,
+  textarea,
+  select {
+    border: 1px solid #d1d5db;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 12px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    margin-right: 5px;
+  }
+
+  /* Lists */
+  ul,
+  ol {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 5px;
+  }
+
+  /* Code blocks */
+  pre,
+  code {
+    background: #f5f5f4;
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    overflow-x: auto;
+    page-break-inside: avoid;
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: 4px solid #16a34a;
+    margin: 15px 0;
+    padding: 10px 15px;
+    background: #f5f5f4;
+    page-break-inside: avoid;
+  }
+
+  /* Print-specific helpers */
+  .print-only {
+    display: block !important;
+  }
+
+  .hide-on-print {
+    display: none !important;
+  }
+
+  .page-break {
+    page-break-after: always;
+  }
+
+  .no-page-break {
+    page-break-inside: avoid;
+  }
+
+  /* Report header */
+  .report-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #16a34a;
+    page-break-after: avoid;
+  }
+
+  .report-date {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  /* Summary section */
+  .report-summary {
+    background: #f5f5f4;
+    padding: 15px;
+    margin: 15px 0;
+    page-break-inside: avoid;
+  }
+
+  /* Charts - show as fallback text since they can't be printed well */
+  canvas,
+  svg:not(.icon) {
+    page-break-inside: avoid;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .chart-placeholder {
+    background: #f5f5f4;
+    border: 1px dashed #d1d5db;
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 40px;
+    padding-top: 15px;
+    border-top: 1px solid #d1d5db;
+    font-size: 11px;
+    color: #666;
+    page-break-before: avoid;
+  }
+
+  /* Color adjustments for print */
+  .color-danger,
+  [style*="color: #dc2626"] {
+    color: #dc2626 !important;
+  }
+
+  .color-success,
+  [style*="color: #16a34a"] {
+    color: #16a34a !important;
+  }
+
+  .color-warning,
+  [style*="color: #d97706"] {
+    color: #d97706 !important;
+  }
+
+  /* Background colors - convert to borders for contrast */
+  [style*="background: #f0fdf4"],
+  [style*="background: #fef2f2"],
+  [style*="background: #fffbeb"] {
+    background: white !important;
+    border-left: 3px solid #16a34a;
+  }
+
+  /* Avoid page breaks in important sections */
+  section,
+  article {
+    page-break-inside: avoid;
+  }
+
+  /* Margins and spacing for print */
+  @page {
+    margin: 20mm;
+  }
+
+  /* Orphans and widows */
+  p,
+  li,
+  th,
+  td {
+    orphans: 3;
+    widows: 3;
+  }
+}
+
+/* Print preview styles */
+@media screen and (prefers-color-scheme: light) {
+  body.print-preview {
+    background: #f5f5f4;
+    padding: 20px;
+  }
+
+  body.print-preview main {
+    background: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    max-width: 8.5in;
+    padding: 20px;
+  }
+}

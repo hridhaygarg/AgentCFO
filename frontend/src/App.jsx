@@ -1,7 +1,9 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import Sidebar from './layouts/Sidebar'
 import Landing from './pages/Landing'
+import { usePageTitle } from './hooks/usePageTitle'
 import './styles/micro-interactions.css'
+import './styles/print.css'
 
 // Lazy load dashboard screens for better performance
 const Overview = lazy(() => import('./screens/Overview'))
@@ -41,6 +43,20 @@ export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  // Compute if this is a dashboard route
+  const isDashboard = currentPath === '/dashboard' || currentPath.startsWith('/dashboard')
+
+  const screenNames = {
+    overview: 'Overview',
+    agents: 'Agents',
+    budget: 'Budget',
+    report: 'Reports',
+    onboarding: 'Onboarding',
+  }
+
+  // Set page title based on current screen
+  usePageTitle(isDashboard ? screenNames[currentScreen] : 'Layer ROI')
 
   // Track page views in Google Analytics
   useEffect(() => {
@@ -94,13 +110,6 @@ export default function App() {
   }
 
   const CurrentScreen = screens[currentScreen] || Overview
-  const screenNames = {
-    overview: 'Overview',
-    agents: 'Agents',
-    budget: 'Budget',
-    report: 'Reports',
-    onboarding: 'Onboarding',
-  }
 
   // Show landing page if on root
   if (currentPath === '/' || currentPath === '') {
@@ -118,7 +127,6 @@ export default function App() {
   }
 
   // Check authentication for dashboard routes
-  const isDashboard = currentPath === '/dashboard' || currentPath.startsWith('/dashboard')
   if (isDashboard && !localStorage.getItem('layeroi_token')) {
     window.location.href = '/login'
     return null
