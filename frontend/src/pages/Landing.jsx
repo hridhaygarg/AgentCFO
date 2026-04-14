@@ -615,10 +615,9 @@ function HowItWorksSection() {
       }} preserveAspectRatio="none">
         <line x1="0" y1="2" x2="100%" y2="2" stroke={colors.accentGreen} strokeWidth="2" style={{
           opacity: hasBeenVisible ? 1 : 0,
-          transition: 'opacity 600ms cubic-bezier(0.16,1,0.3,1) 200ms',
           strokeDasharray: '1000',
           strokeDashoffset: hasBeenVisible ? 0 : 1000,
-          transition: 'stroke-dashoffset 1000ms cubic-bezier(0.16,1,0.3,1) 200ms',
+          transition: 'opacity 600ms cubic-bezier(0.16,1,0.3,1) 200ms, stroke-dashoffset 1000ms cubic-bezier(0.16,1,0.3,1) 200ms',
         }} />
       </svg>
 
@@ -1118,7 +1117,7 @@ function ROICalculator() {
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '36px', fontWeight: '700', color: colors.textPrimary, marginBottom: '4px' }}>
               ${roiCost.toLocaleString()}/mo
             </div>
-            <div style={{ fontSize: '13px', color: colors.textSecondary' }}>
+            <div style={{ fontSize: '13px', color: colors.textSecondary }}>
               {agents < 5 ? 'Starter' : agents <= 30 ? 'Business' : 'Enterprise'} plan
             </div>
           </div>
