@@ -4,8 +4,10 @@ import { logger } from '../utils/logger.js';
 import { asyncHandler, AppError } from '../middleware/errorHandler.js';
 import { hashPassword, verifyPassword } from '../auth/password.js';
 import { generateTokens, verifyToken, generateMFAToken } from '../auth/jwt.js';
+import { verifyMFAToken } from '../auth/mfa.js';
 import { handleOAuthCallback } from '../auth/oauth.js';
 import { isValidEmail } from '../utils/validators.js';
+import { createSession, invalidateAllUserSessions } from '../db/session.js';
 
 const router = express.Router();
 
@@ -132,6 +134,22 @@ router.post(
         org_id: org.id
       });
 
+      // Create session for new user
+      try {
+        await createSession(newUser.id, {
+          userAgent: req.headers['user-agent'] || 'unknown',
+          ipAddress: req.ip || req.connection.remoteAddress,
+          device: 'web',
+          location: 'unknown'
+        });
+      } catch (sessionErr) {
+        logger.error('Failed to create session after registration', {
+          userId: newUser.id,
+          error: sessionErr.message
+        });
+        // Don't fail registration due to session error
+      }
+
       logger.info('User registered successfully', {
         userId: newUser.id,
         email: newUser.email,
@@ -207,10 +225,123 @@ router.post(
     // Generate tokens
     const tokens = generateTokens(user);
 
+    // Create session for logged-in user
+    try {
+      await createSession(user.id, {
+        userAgent: req.headers['user-agent'] || 'unknown',
+        ipAddress: req.ip || req.connection.remoteAddress,
+        device: 'web',
+        location: 'unknown'
+      });
+    } catch (sessionErr) {
+      logger.error('Failed to create session after login', {
+        userId: user.id,
+        error: sessionErr.message
+      });
+      // Don't fail login due to session error
+    }
+
     logger.info('User logged in successfully', {
       email,
       userId: user.id
     });
+
+    res.status(200).json({
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name
+      },
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      expiresIn: tokens.expiresIn
+    });
+  })
+);
+
+// POST /verify-mfa - Verify MFA token and get access token
+router.post(
+  '/verify-mfa',
+  asyncHandler(async (req, res) => {
+    const { mfaToken, totp } = req.body;
+
+    // Input validation
+    if (!mfaToken || !totp) {
+      throw new AppError('MFA token and TOTP are required', 400, 'INVALID_INPUT');
+    }
+
+    // Verify MFA token
+    let decoded;
+    try {
+      decoded = verifyToken(mfaToken);
+    } catch (err) {
+      logger.info('Invalid MFA token', { error: err.message });
+      throw new AppError('Invalid or expired MFA token', 401, 'INVALID_TOKEN');
+    }
+
+    // Ensure token is an MFA token
+    if (decoded.type !== 'mfa') {
+      throw new AppError('Invalid token type', 401, 'INVALID_TOKEN');
+    }
+
+    const supabase = getSupabaseClient();
+
+    // Get user
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', decoded.sub)
+      .single();
+
+    if (userError || !user) {
+      throw new AppError('User not found', 401, 'INVALID_TOKEN');
+    }
+
+    // Verify TOTP
+    const totpValid = verifyMFAToken(totp, user.mfa_secret);
+
+    if (!totpValid) {
+      logger.info('Invalid TOTP provided', { userId: user.id });
+      throw new AppError('Invalid TOTP', 401, 'INVALID_MFA');
+    }
+
+    // Update user with MFA verification timestamp
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({
+        mfa_verified_at: new Date().toISOString()
+      })
+      .eq('id', user.id);
+
+    if (updateError) {
+      logger.error('Failed to update MFA verification', {
+        userId: user.id,
+        error: updateError.message
+      });
+      throw new AppError('Failed to verify MFA', 500);
+    }
+
+    // Generate tokens
+    const tokens = generateTokens(user);
+
+    // Create session for logged-in user
+    try {
+      await createSession(user.id, {
+        userAgent: req.headers['user-agent'] || 'unknown',
+        ipAddress: req.ip || req.connection.remoteAddress,
+        device: 'web',
+        location: 'unknown'
+      });
+    } catch (sessionErr) {
+      logger.error('Failed to create session after MFA verification', {
+        userId: user.id,
+        error: sessionErr.message
+      });
+      // Don't fail MFA verification due to session error
+    }
+
+    logger.info('MFA verified successfully', { userId: user.id });
 
     res.status(200).json({
       user: {
@@ -263,6 +394,17 @@ router.post(
         error: updateError?.message
       });
       throw new AppError('Logout failed', 500);
+    }
+
+    // Invalidate all sessions for user
+    try {
+      await invalidateAllUserSessions(decoded.sub);
+    } catch (sessionErr) {
+      logger.error('Failed to invalidate user sessions on logout', {
+        userId: decoded.sub,
+        error: sessionErr.message
+      });
+      // Don't fail logout due to session invalidation error
     }
 
     // NOTE: Access tokens persist until expiry (15m default) since they are self-contained JWTs.
