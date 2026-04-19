@@ -26,6 +26,7 @@ import docsRoutes from './api/routes/docs.js';
 import insightsRoutes from './api/routes/insights.js';
 import forecastRoutes from './api/routes/forecasts.js';
 import webhookRoutes from './api/routes/webhooks.js';
+import paymentsRoutes from './api/routes/payments.js';
 
 dotenv.config();
 
@@ -53,6 +54,11 @@ app.get('/health', (req, res) => {
 
 // Middleware
 app.use(corsMiddleware);
+
+// CRITICAL: Webhook needs RAW body for signature verification — BEFORE express.json()
+app.use('/payments/webhook', express.raw({ type: 'application/json' }));
+
+// JSON body parsing for everything else
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(requestLogger);
@@ -73,6 +79,7 @@ app.use(v2Routes);
 app.use(insightsRoutes);
 app.use(forecastRoutes);
 app.use(webhookRoutes);
+app.use('/payments', paymentsRoutes);
 
 // Metrics endpoint for monitoring
 app.get('/api/metrics/weekly', async (req, res) => {

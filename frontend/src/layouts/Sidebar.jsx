@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Home, BarChart3, Settings, Users, FileText, Target, Lock } from 'lucide-react';
 import { useResponsive } from '../hooks/useResponsive';
+import { UpgradeModal } from '../components/UpgradeModal';
 
 export default function Sidebar({ active, onNavigate, colors }) {
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const { isMobile, isTabletUp, isDesktopUp } = useResponsive();
 
   const items = [
@@ -143,6 +146,33 @@ export default function Sidebar({ active, onNavigate, colors }) {
           </button>
         ))}
       </div>
+
+      {/* Upgrade CTA */}
+      {showLabel && (
+        <div style={{
+          margin: '16px 0 0', padding: '16px',
+          background: 'rgba(22,163,74,0.06)',
+          border: `1px solid rgba(22,163,74,0.2)`,
+          borderRadius: '10px',
+        }}>
+          <div style={{ fontFamily: 'monospace', fontSize: '10px', color: colors.accentGreen, fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px' }}>
+            FREE PLAN
+          </div>
+          <div style={{ fontSize: '12px', color: colors.textSecondary, marginBottom: '12px' }}>
+            2 agents included
+          </div>
+          <button onClick={() => setShowUpgrade(true)} style={{
+            width: '100%', padding: '8px',
+            background: colors.accentGreen, color: 'white',
+            border: 'none', borderRadius: '6px',
+            fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+          }}>
+            Upgrade plan
+          </button>
+        </div>
+      )}
+
+      <UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} currentPlan="free" />
     </nav>
   );
 }
