@@ -84,7 +84,7 @@ router.post('/auth/signup', async (req, res) => {
     }
 
     const apiKey = `sk-${crypto.randomBytes(16).toString('hex')}`;
-    const token = signJWT({ userId: user.id, orgId: org.id, email: cleanEmail });
+    const token = signJWT({ userId: user.id, orgId: org.id, email: cleanEmail, isSuperadmin: user.is_superadmin || false });
 
     logger.info('New user signed up', { email: cleanEmail, orgId: org.id });
 
@@ -92,7 +92,7 @@ router.post('/auth/signup', async (req, res) => {
       success: true,
       token,
       apiKey,
-      user: { id: user.id, email: user.email, name: user.name },
+      user: { id: user.id, email: user.email, name: user.name, is_superadmin: user.is_superadmin || false },
       organisation: { id: org.id, name: company },
       message: 'Account created successfully',
     });
@@ -115,7 +115,7 @@ router.post('/auth/login', authLimiter, async (req, res) => {
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, name, password_hash, org_id')
+      .select('id, email, name, password_hash, org_id, is_superadmin')
       .eq('email', cleanEmail)
       .single();
 
@@ -135,7 +135,7 @@ router.post('/auth/login', authLimiter, async (req, res) => {
       .eq('id', user.org_id)
       .single();
 
-    const token = signJWT({ userId: user.id, orgId: user.org_id, email: user.email });
+    const token = signJWT({ userId: user.id, orgId: user.org_id, email: user.email, isSuperadmin: user.is_superadmin || false });
 
     logger.info('User logged in', { email: cleanEmail });
 
@@ -143,7 +143,7 @@ router.post('/auth/login', authLimiter, async (req, res) => {
       success: true,
       data: {
         token,
-        user: { id: user.id, email: user.email, name: user.name },
+        user: { id: user.id, email: user.email, name: user.name, is_superadmin: user.is_superadmin || false },
         org: org || { id: user.org_id },
       },
     });

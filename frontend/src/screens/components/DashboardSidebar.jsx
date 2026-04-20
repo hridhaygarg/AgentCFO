@@ -1,17 +1,24 @@
 import { Icon } from './Icon';
 
-const NAV_ITEMS = [
+const MAIN_NAV = [
   { icon: 'overview', label: 'Overview', id: 'overview' },
   { icon: 'agents', label: 'Agents', id: 'agents' },
   { icon: 'budget', label: 'Budget', id: 'budget' },
   { icon: 'reports', label: 'Reports', id: 'report' },
+];
+
+const FOUNDER_NAV = [
   { icon: 'outreach', label: 'Outreach', id: 'outreach' },
-  { icon: 'settings', label: 'Onboarding', id: 'onboarding' },
+];
+
+const ACCOUNT_NAV = [
   { icon: 'integrations', label: 'Admin', id: 'admin' },
 ];
 
 export function DashboardSidebar({ active, onNavigate, onUpgrade, onClose }) {
   const org = JSON.parse(localStorage.getItem('layeroi_org') || 'null');
+  const user = JSON.parse(localStorage.getItem('layeroi_user') || 'null');
+  const isSuperadmin = user?.is_superadmin === true;
   const plan = org?.plan || 'free';
   const limit = org?.plan_agent_limit ?? 2;
 
@@ -42,7 +49,47 @@ export function DashboardSidebar({ active, onNavigate, onUpgrade, onClose }) {
       {/* Nav */}
       <nav style={{ flex: 1, padding: '16px 12px' }}>
         <div className='mono' style={{ fontSize: '10px', color: 'var(--white-38)', letterSpacing: '0.12em', padding: '0 12px 8px', fontWeight: 500 }}>MAIN</div>
-        {NAV_ITEMS.map(item => (
+        {MAIN_NAV.map(item => (
+          <button key={item.id} onClick={() => { onNavigate(item.id); if (onClose) onClose(); }} style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
+            padding: '8px 12px', marginBottom: '1px', borderRadius: '6px',
+            background: active === item.id ? 'var(--green-soft)' : 'transparent',
+            color: active === item.id ? '#22c55e' : 'var(--white-75)',
+            fontSize: '13.5px', fontWeight: active === item.id ? 600 : 500,
+            textAlign: 'left', border: 'none', cursor: 'pointer',
+            transition: 'background 140ms linear, color 140ms linear',
+          }}
+          onMouseEnter={e => { if (active !== item.id) { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = 'white'; }}}
+          onMouseLeave={e => { if (active !== item.id) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--white-75)'; }}}>
+            <Icon name={item.icon} size={17} />
+            <span>{item.label}</span>
+          </button>
+        ))}
+
+        {isSuperadmin && (
+          <>
+            <div className='mono' style={{ fontSize: '10px', color: 'var(--white-38)', letterSpacing: '0.12em', padding: '16px 12px 8px', fontWeight: 500 }}>FOUNDER</div>
+            {FOUNDER_NAV.map(item => (
+              <button key={item.id} onClick={() => { onNavigate(item.id); if (onClose) onClose(); }} style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '8px 12px', marginBottom: '1px', borderRadius: '6px',
+                background: active === item.id ? 'var(--green-soft)' : 'transparent',
+                color: active === item.id ? '#22c55e' : 'var(--white-75)',
+                fontSize: '13.5px', fontWeight: active === item.id ? 600 : 500,
+                textAlign: 'left', border: 'none', cursor: 'pointer',
+                transition: 'background 140ms linear, color 140ms linear',
+              }}
+              onMouseEnter={e => { if (active !== item.id) { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = 'white'; }}}
+              onMouseLeave={e => { if (active !== item.id) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--white-75)'; }}}>
+                <Icon name={item.icon} size={17} />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </>
+        )}
+
+        <div className='mono' style={{ fontSize: '10px', color: 'var(--white-38)', letterSpacing: '0.12em', padding: '16px 12px 8px', fontWeight: 500 }}>ACCOUNT</div>
+        {ACCOUNT_NAV.map(item => (
           <button key={item.id} onClick={() => { onNavigate(item.id); if (onClose) onClose(); }} style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
             padding: '8px 12px', marginBottom: '1px', borderRadius: '6px',
