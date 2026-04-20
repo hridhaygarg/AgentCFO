@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
 import Landing from './pages/Landing'
 import { usePageTitle } from './hooks/usePageTitle'
 import { DashboardSidebar } from './screens/components/DashboardSidebar'
@@ -174,6 +174,40 @@ export default function App() {
   return <DarkDashboard currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screenNames={screenNames} isMobile={isMobile} />
 }
 
+class ErrorBoundaryDark extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  componentDidCatch(error, info) { console.error('Dashboard error:', error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px', color: 'white' }}>
+          <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '28px', marginBottom: '16px' }}>Something went wrong</h2>
+          <pre style={{ background: '#151515', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px', color: '#ef4444' }}>
+            {this.state.error?.message || 'Unknown error'}
+          </pre>
+          <button onClick={() => window.location.reload()} style={{
+            marginTop: '16px', padding: '10px 20px', background: '#22c55e', color: '#050505',
+            borderRadius: '6px', border: 'none', fontWeight: 600, cursor: 'pointer',
+          }}>Reload page</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Lazy imports OUTSIDE component to prevent remount on every render
+const DashScreens = {
+  overview: lazy(() => import('./screens/Overview')),
+  agents: lazy(() => import('./screens/Agents')),
+  budget: lazy(() => import('./screens/Budget')),
+  report: lazy(() => import('./screens/Report')),
+  onboarding: lazy(() => import('./screens/Onboarding')),
+  outreach: lazy(() => import('./screens/Outreach')),
+  admin: lazy(() => import('./screens/Admin')),
+};
+
 function DarkDashboard({ currentScreen, setCurrentScreen, screenNames, isMobile }) {
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -206,16 +240,7 @@ function DarkDashboard({ currentScreen, setCurrentScreen, screenNames, isMobile 
     }
   }, []);
 
-  const screens = {
-    overview: lazy(() => import('./screens/Overview')),
-    agents: lazy(() => import('./screens/Agents')),
-    budget: lazy(() => import('./screens/Budget')),
-    report: lazy(() => import('./screens/Report')),
-    onboarding: lazy(() => import('./screens/Onboarding')),
-    outreach: lazy(() => import('./screens/Outreach')),
-    admin: lazy(() => import('./screens/Admin')),
-  };
-  const CurrentScreen = screens[currentScreen] || screens.overview;
+  const CurrentScreen = DashScreens[currentScreen] || DashScreens.overview;
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--black, #050505)', color: 'white', fontFamily: 'Inter, -apple-system, sans-serif' }}>
@@ -242,9 +267,11 @@ function DarkDashboard({ currentScreen, setCurrentScreen, screenNames, isMobile 
       }}>
         <DashboardTopBar onToggleSidebar={() => setSidebarOpen(o => !o)} screenName={screenNames[currentScreen] || 'Dashboard'} />
         <main style={{ flex: 1, padding: isMobile ? '24px 16px' : '40px 48px', maxWidth: '1280px', width: '100%', margin: '0 auto' }}>
-          <Suspense fallback={<div style={{ padding: '64px 0', textAlign: 'center', color: 'var(--white-55, rgba(255,255,255,0.55))' }}>Loading...</div>}>
-            <CurrentScreen />
-          </Suspense>
+          <ErrorBoundaryDark>
+            <Suspense fallback={<div style={{ padding: '64px 0', textAlign: 'center', color: 'var(--white-55, rgba(255,255,255,0.55))' }}>Loading...</div>}>
+              <CurrentScreen />
+            </Suspense>
+          </ErrorBoundaryDark>
         </main>
       </div>
 
