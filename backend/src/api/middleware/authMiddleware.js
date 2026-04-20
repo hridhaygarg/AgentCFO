@@ -4,7 +4,12 @@ import { validateApiKey } from '../../auth/apiKeys.js';
 
 export const authMiddleware = (req, res, next) => {
   // Skip auth for public endpoints
-  const publicEndpoints = ['/health', '/health/detailed', '/health/llm', '/health/payments', '/api/signup', '/api/metrics/weekly', '/payments/plans', '/payments/webhook', '/auth/login', '/auth/signup', '/auth/verify', '/auth/forgot-password', '/auth/reset-password'];
+  const publicEndpoints = ['/health', '/health/detailed', '/health/llm', '/health/payments', '/api/signup', '/api/metrics/weekly', '/auth/login', '/auth/signup', '/auth/verify', '/auth/forgot-password', '/auth/reset-password'];
+
+  // Payment routes handle their own auth internally
+  if (req.path.startsWith('/payments/')) {
+    return next();
+  }
   if (publicEndpoints.includes(req.path)) {
     return next();
   }
