@@ -36,6 +36,7 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('member');
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [inviting, setInviting] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
@@ -573,104 +574,95 @@ export default function Admin() {
         </div>
       )}
 
-      {/* Billing Tab */}
-      {activeTab === 'billing' && (
-        <div>
-          <div style={{
-            background: colors.bgSurface,
-            border: `1px solid ${colors.borderDefault}`,
-            borderRadius: '8px',
-            padding: '24px',
-          }}>
-            <h2 style={{
-              fontFamily: 'Playfair Display, serif',
-              fontSize: '20px',
-              fontWeight: '600',
-              color: colors.textPrimary,
-              marginBottom: '20px',
-            }}>
-              Billing & Subscription
-            </h2>
-
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '20px', marginBottom: '32px' }}>
-              <div style={{ background: colors.bgSubtle, padding: '20px', borderRadius: '8px' }}>
-                <div style={{ fontSize: '12px', color: colors.textSecondary, marginBottom: '8px', textTransform: 'uppercase', fontWeight: '600' }}>Current Plan</div>
-                <div style={{ fontSize: '28px', fontWeight: '700', color: colors.textPrimary, marginBottom: '8px' }}>Pro</div>
-                <div style={{ fontSize: '14px', color: colors.textSecondary }}>$299/month billed annually</div>
-              </div>
-
-              <div style={{ background: colors.bgSubtle, padding: '20px', borderRadius: '8px' }}>
-                <div style={{ fontSize: '12px', color: colors.textSecondary, marginBottom: '8px', textTransform: 'uppercase', fontWeight: '600' }}>Renewal Date</div>
-                <div style={{ fontSize: '24px', fontWeight: '700', color: colors.textPrimary, marginBottom: '8px' }}>April 18, 2027</div>
-                <div style={{ fontSize: '14px', color: colors.textSecondary }}>Auto-renews annually</div>
-              </div>
+      {/* Upgrade Modal */}
+      {upgradeOpen && (
+        <div onClick={e => e.target === e.currentTarget && setUpgradeOpen(false)} style={{
+          position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)',
+          backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px',
+        }}>
+          <div style={{ background: '#0f0f0f', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '14px', width: '100%', maxWidth: '900px', maxHeight: '90vh', overflow: 'auto', padding: '32px' }}>
+            <h2 className='serif' style={{ fontSize: '28px', color: 'white', margin: '0 0 24px' }}>Choose a plan</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+              {[
+                { id: 'starter', name: 'Starter', price: '$499', limit: '5 agents' },
+                { id: 'business', name: 'Business', price: '$2,500', limit: '30 agents', highlight: true },
+                { id: 'enterprise', name: 'Enterprise', price: '$8,500', limit: 'Unlimited' },
+              ].map(p => (
+                <div key={p.id} style={{ background: p.highlight ? 'rgba(34,197,94,0.04)' : '#151515', border: `1px solid ${p.highlight ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.09)'}`, borderRadius: '12px', padding: '24px' }}>
+                  <div style={{ fontSize: '18px', fontWeight: 600, color: 'white', marginBottom: '8px' }}>{p.name}</div>
+                  <div className='mono' style={{ fontSize: '32px', fontWeight: 700, color: 'white' }}>{p.price}<span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)' }}>/mo</span></div>
+                  <div className='mono' style={{ fontSize: '11px', color: '#22c55e', margin: '8px 0 20px', letterSpacing: '0.06em' }}>{p.limit.toUpperCase()}</div>
+                  <button onClick={async () => {
+                    const token = localStorage.getItem('layeroi_token');
+                    const res = await fetch('https://api.layeroi.com/payments/checkout', {
+                      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                      body: JSON.stringify({ plan: p.id }),
+                    });
+                    const data = await res.json();
+                    if (data.success && data.data?.checkout_url) window.location.href = data.data.checkout_url;
+                  }} style={{ width: '100%', padding: '10px', background: p.highlight ? '#22c55e' : 'rgba(255,255,255,0.9)', color: '#050505', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                    Upgrade to {p.name} →
+                  </button>
+                </div>
+              ))}
             </div>
-
-            <div style={{ borderTop: `1px solid ${colors.borderDefault}`, paddingTop: '20px' }}>
-              <h3 style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: colors.textPrimary,
-                marginBottom: '12px',
-              }}>
-                Plan Features
-              </h3>
-              <ul style={{
-                listStyle: 'none',
-                padding: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              }}>
-                {[
-                  'Unlimited agents',
-                  'Real-time cost tracking',
-                  'Advanced analytics',
-                  'Team collaboration (up to 10 members)',
-                  'Priority support',
-                  'Custom integrations',
-                ].map((feature, i) => (
-                  <li key={i} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    color: colors.textSecondary,
-                    fontSize: '14px',
-                  }}>
-                    <Check size={16} style={{ color: colors.accentGreen }} />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
-              <button style={{
-                padding: '12px 24px',
-                background: colors.bgSubtle,
-                color: colors.textPrimary,
-                border: `1px solid ${colors.borderDefault}`,
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-              }}>
-                Change Plan
-              </button>
-              <button style={{
-                padding: '12px 24px',
-                background: colors.bgSubtle,
-                color: colors.textPrimary,
-                border: `1px solid ${colors.borderDefault}`,
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-              }}>
-                Billing History
-              </button>
-            </div>
+            <button onClick={() => setUpgradeOpen(false)} style={{ marginTop: '20px', background: 'none', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.7)', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
           </div>
         </div>
       )}
+
+      {/* Billing Tab */}
+      {activeTab === 'billing' && (() => {
+        const PLAN_CATALOG = {
+          free: { name: 'Free', price: '$0', cadence: '/month', features: ['2 agents', '14 days history', 'Basic metrics', 'Community support'] },
+          starter: { name: 'Starter', price: '$499', cadence: '/month', features: ['5 agents', '90 days history', 'Weekly reports', 'Email support'] },
+          business: { name: 'Business', price: '$2,500', cadence: '/month', features: ['30 agents', '1 year history', 'Real-time anomaly detection', 'Priority support', 'Custom integrations'] },
+          enterprise: { name: 'Enterprise', price: '$8,500', cadence: '/month', features: ['Unlimited agents', '3 year history', 'SSO/SAML', 'Dedicated success manager', 'Custom SLA'] },
+        };
+        const org = JSON.parse(localStorage.getItem('layeroi_org') || 'null');
+        const planKey = (org?.plan || 'free').toLowerCase();
+        const plan = PLAN_CATALOG[planKey] || PLAN_CATALOG.free;
+        const subId = org?.dodo_subscription_id;
+
+        return (
+          <div style={{ background: colors.bgSurface, border: `1px solid ${colors.borderDefault}`, borderRadius: '14px', overflow: 'hidden' }}>
+            <div style={{ padding: '20px 24px', borderBottom: `1px solid ${colors.borderDefault}` }}>
+              <h2 className='serif' style={{ fontSize: '22px', color: colors.textPrimary, margin: 0 }}>Billing & Subscription</h2>
+            </div>
+            <div style={{ padding: '24px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                <div style={{ background: colors.bgSubtle, border: `1px solid ${colors.borderDefault}`, borderRadius: '10px', padding: '20px' }}>
+                  <div className='mono' style={{ fontSize: '10px', color: colors.textTertiary, letterSpacing: '0.12em' }}>CURRENT PLAN</div>
+                  <div className='serif' style={{ fontSize: '36px', color: colors.textPrimary, margin: '8px 0 4px' }}>{plan.name}</div>
+                  <div className='mono' style={{ fontSize: '14px', color: colors.textSecondary }}>{plan.price}<span style={{ color: colors.textTertiary }}>{plan.cadence}</span></div>
+                </div>
+                <div style={{ background: colors.bgSubtle, border: `1px solid ${colors.borderDefault}`, borderRadius: '10px', padding: '20px' }}>
+                  <div className='mono' style={{ fontSize: '10px', color: colors.textTertiary, letterSpacing: '0.12em' }}>STATUS</div>
+                  <div className='serif' style={{ fontSize: '20px', color: colors.textPrimary, margin: '8px 0 4px' }}>
+                    {planKey === 'free' ? 'Active (Free tier)' : subId ? 'Active' : 'Pending'}
+                  </div>
+                  <div className='mono' style={{ fontSize: '11px', color: colors.textTertiary }}>
+                    {subId ? 'ID: ' + subId.slice(0, 20) + '...' : 'No active subscription'}
+                  </div>
+                </div>
+              </div>
+              <h3 className='serif' style={{ fontSize: '18px', color: colors.textPrimary, margin: '0 0 12px' }}>Plan features</h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {plan.features.map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: colors.textSecondary, fontSize: '13px' }}>
+                    <span style={{ color: colors.accentGreen }}>✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button onClick={() => setUpgradeOpen(true)} style={{ padding: '10px 18px', background: colors.accentGreen, color: '#050505', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                  {planKey === 'free' ? 'Upgrade plan' : 'Change plan'}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
