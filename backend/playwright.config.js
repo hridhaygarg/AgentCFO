@@ -1,5 +1,6 @@
 export default {
   testDir: './tests/e2e',
+  testMatch: '**/*.spec.js',
   timeout: 60000,
   retries: 1,
   reporter: [['list']],

@@ -90,9 +90,21 @@ test.describe('layeroi full customer journey', () => {
   });
 
   test('5. Login page works with correct credentials', async ({ page }) => {
+    // First signup to ensure user exists
+    const loginEmail = `e2e_login_${Date.now()}@layeroi-test.com`;
+    await page.goto(`${SITE}/signup`, { waitUntil: 'networkidle' });
+    await page.fill('input[name="name"]', 'Login Test');
+    await page.fill('input[name="email"]', loginEmail);
+    await page.fill('input[name="company"]', 'Login Corp');
+    await page.fill('input[name="password"]', PASSWORD);
+    await page.click('button[type="submit"]');
+    await page.waitForTimeout(3000);
+
+    // Clear storage and go to login
+    await page.evaluate(() => localStorage.clear());
     await page.goto(`${SITE}/login`, { waitUntil: 'networkidle' });
 
-    await page.fill('input[type="email"]', EMAIL);
+    await page.fill('input[type="email"]', loginEmail);
     await page.fill('input[type="password"]', PASSWORD);
     await page.click('button[type="submit"]');
 
