@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import { logger } from './utils/logger.js';
 import { CONFIG } from './config/constants.js';
 import { initLoopDetector } from './loopDetector.js';
@@ -7,7 +8,7 @@ import { initAutomations } from './automations/cron.js';
 import { initializeDatabase } from './db/initDb.js';
 
 // Import middleware
-import { corsMiddleware, errorHandler, requestLogger, extractAgentName } from './api/middleware/index.js';
+import { corsMiddleware, corsOptions, errorHandler, requestLogger, extractAgentName } from './api/middleware/index.js';
 
 // Import routes
 import {
@@ -40,7 +41,11 @@ const PORT = process.env.PORT;
 
 logger.info('Server initializing', { port: PORT, environment: process.env.NODE_ENV || 'development' });
 
-// Health check FIRST - before all middleware
+// ─── 1. CORS FIRST — before everything ───────────────────
+app.use(corsMiddleware);
+app.options('*', corsOptions);
+
+// ─── 2. Health check (after CORS so it gets headers) ──────
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
@@ -52,19 +57,16 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Middleware
-app.use(corsMiddleware);
-
-// CRITICAL: Webhook needs RAW body for signature verification — BEFORE express.json()
+// ─── 3. Webhook raw body BEFORE json parser ───────────────
 app.use('/payments/webhook', express.raw({ type: 'application/json' }));
 
-// JSON body parsing for everything else
+// ─── 4. Body parsers ─────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(requestLogger);
 app.use(extractAgentName);
 
-// Routes
+// ─── 5. Routes ────────────────────────────────────────────
 app.use(healthRoutes);
 app.use(docsRoutes);
 app.use(authRoutes);
@@ -81,7 +83,7 @@ app.use(forecastRoutes);
 app.use(webhookRoutes);
 app.use('/payments', paymentsRoutes);
 
-// Metrics endpoint for monitoring
+// Metrics endpoint
 app.get('/api/metrics/weekly', async (req, res) => {
   try {
     const { getMetricsSummary } = await import('./automations/weeklyReport.js');
@@ -93,7 +95,7 @@ app.get('/api/metrics/weekly', async (req, res) => {
   }
 });
 
-// Signup endpoint (temporary - to be replaced in Section 5)
+// Legacy signup
 app.post('/api/signup', async (req, res) => {
   try {
     const { name, email, company } = req.body;
@@ -101,8 +103,8 @@ app.post('/api/signup', async (req, res) => {
       return res.status(400).json({ error: 'Missing fields' });
     }
     const apiKey = `sk-${Math.random().toString(36).substr(2, 32)}`;
-    res.json({ success: true, apiKey, message: 'Account created. Check your email for welcome.' });
-    logger.info('New signup', { email });
+    res.json({ success: true, apiKey, message: 'Account created.' });
+    logger.info('New signup (legacy)', { email });
   } catch (err) {
     logger.error('Signup failed', err);
     res.status(500).json({ error: err.message });
