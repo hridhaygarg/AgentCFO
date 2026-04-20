@@ -57,6 +57,8 @@ export default function Signup() {
       const result = await res.json();
       if (result.success && result.token) {
         localStorage.setItem('layeroi_token', result.token);
+        if (result.user) localStorage.setItem('layeroi_user', JSON.stringify(result.user));
+        if (result.organisation) localStorage.setItem('layeroi_org', JSON.stringify(result.organisation));
         if (result.apiKey) {
           localStorage.setItem('layeroi_api_key', result.apiKey);
           setApiKey(result.apiKey);

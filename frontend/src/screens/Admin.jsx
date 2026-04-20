@@ -39,7 +39,8 @@ export default function Admin() {
     const fetchAdminData = async () => {
       try {
         setLoading(true);
-        const orgId = authService.org?.id;
+        let orgId = authService.org?.id;
+        if (!orgId) { try { const t = localStorage.getItem("layeroi_token"); if (t) { orgId = JSON.parse(atob(t.split(".")[1])).orgId; } } catch(e) {} }
 
         if (!orgId) {
           setError('Organization not found');
@@ -87,7 +88,8 @@ export default function Admin() {
 
     try {
       setInviting(true);
-      const orgId = authService.org?.id;
+      let orgId = authService.org?.id;
+        if (!orgId) { try { const t = localStorage.getItem("layeroi_token"); if (t) { orgId = JSON.parse(atob(t.split(".")[1])).orgId; } } catch(e) {} }
       await apiService.inviteTeamMember(orgId, inviteEmail, inviteRole);
 
       // Refresh members list

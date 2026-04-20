@@ -35,10 +35,21 @@ export default function Overview() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const orgId = authService.org?.id;
+        let orgId = authService.org?.id;
+
+        // Fallback: try to extract orgId from JWT if authService.org is not set
+        if (!orgId) {
+          try {
+            const token = localStorage.getItem('layeroi_token');
+            if (token) {
+              const payload = JSON.parse(atob(token.split('.')[1]));
+              orgId = payload.orgId;
+            }
+          } catch (e) { /* ignore parse errors */ }
+        }
 
         if (!orgId) {
-          setError('Organization not found');
+          setError('Organization not found. Please log out and sign in again.');
           setLoading(false);
           return;
         }

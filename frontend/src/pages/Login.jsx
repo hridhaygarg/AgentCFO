@@ -31,6 +31,8 @@ export default function Login() {
 
       if (data.success && data.data?.token) {
         localStorage.setItem('layeroi_token', data.data.token);
+        if (data.data.user) localStorage.setItem('layeroi_user', JSON.stringify(data.data.user));
+        if (data.data.org) localStorage.setItem('layeroi_org', JSON.stringify(data.data.org));
         window.location.href = '/dashboard';
       } else {
         setError(data.error?.message || 'Invalid email or password');
