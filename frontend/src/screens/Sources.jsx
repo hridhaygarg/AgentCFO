@@ -4,9 +4,9 @@ import { Icon } from './components/Icon';
 const API = 'https://api.layeroi.com';
 
 const PROVIDERS = [
-  { id: 'openai', name: 'OpenAI', desc: 'Import spend data from your OpenAI organization. Requires an admin API key (sk-admin-...).', keyLabel: 'Admin API Key', placeholder: 'sk-admin-...', helpUrl: 'https://platform.openai.com/settings/organization/admin-keys' },
-  { id: 'anthropic', name: 'Anthropic', desc: 'Import spend data from your Anthropic workspace. Requires an admin API key.', keyLabel: 'Admin API Key', placeholder: 'sk-ant-admin-...', helpUrl: 'https://console.anthropic.com/settings/admin-keys' },
-  { id: 'bedrock', name: 'AWS Bedrock', desc: 'Import AI spend from AWS Cost Explorer filtered to Bedrock. Requires IAM credentials with CostExplorerReadOnly.', keyLabel: 'Access Key ID', placeholder: 'AKIA...', isAws: true },
+  { id: 'openai', name: 'OpenAI', desc: 'Import spend data from your OpenAI organization. Requires an admin API key (sk-admin-...).', keyLabel: 'Admin API Key', placeholder: 'sk-admin-...', helpUrl: 'https://platform.openai.com/settings/organization/admin-keys', ready: true },
+  { id: 'anthropic', name: 'Anthropic', desc: 'Import spend data from your Anthropic workspace. Requires an admin API key.', keyLabel: 'Admin API Key', placeholder: 'sk-ant-admin-...', helpUrl: 'https://console.anthropic.com/settings/admin-keys', ready: false },
+  { id: 'bedrock', name: 'AWS Bedrock', desc: 'Import AI spend from AWS Cost Explorer filtered to Bedrock. Requires IAM credentials with CostExplorerReadOnly.', keyLabel: 'Access Key ID', placeholder: 'AKIA...', isAws: true, ready: false },
 ];
 
 export default function Sources() {
@@ -85,14 +85,28 @@ export default function Sources() {
       {/* Provider cards */}
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '40px' }}>
         {PROVIDERS.map(p => (
-          <div key={p.id} style={{ background: '#0f0f0f', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '24px', display: 'flex', flexDirection: 'column' }}>
+          <div key={p.id} style={{ background: '#0f0f0f', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+            {!p.ready && (
+              <span className='mono' style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '9px', color: '#f59e0b', letterSpacing: '0.12em', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '100px', padding: '3px 10px', fontWeight: 500 }}>COMING SOON</span>
+            )}
             <div style={{ fontSize: '18px', fontWeight: 600, color: 'white', marginBottom: '8px' }}>{p.name}</div>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, flex: 1, marginBottom: '20px' }}>{p.desc}</p>
-            <button onClick={() => { setConnectModal(p.id); setError(''); }} style={{
-              width: '100%', padding: '10px', background: '#22c55e', color: '#050505', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-            }}>Connect {p.name}</button>
+            {p.ready ? (
+              <button onClick={() => { setConnectModal(p.id); setError(''); }} style={{
+                width: '100%', padding: '10px', background: '#22c55e', color: '#050505', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+              }}>Connect {p.name}</button>
+            ) : (
+              <button onClick={() => {}} style={{
+                width: '100%', padding: '10px', background: 'transparent', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'default',
+              }}>Notify me when ready</button>
+            )}
           </div>
         ))}
+        <div style={{ gridColumn: '1 / -1', marginTop: '4px' }}>
+          <p style={{ fontSize: '13px', color: '#a1a1aa', fontStyle: 'italic', margin: 0 }}>
+            Anthropic and AWS Bedrock integrations are in final testing. Use OpenAI for now — support for Anthropic and Bedrock ships in the next release.
+          </p>
+        </div>
       </section>
 
       {/* Connected sources */}
