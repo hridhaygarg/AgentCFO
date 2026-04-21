@@ -1,15 +1,15 @@
 import crypto from 'crypto';
 
-const KEY_HEX = process.env.CREDENTIAL_ENCRYPTION_KEY || '';
-let KEY = null;
-if (KEY_HEX.length === 64) {
-  try { KEY = Buffer.from(KEY_HEX, 'hex'); } catch { KEY = null; }
-} else if (KEY_HEX.length > 0) {
-  console.warn('CREDENTIAL_ENCRYPTION_KEY must be 64 hex chars. Using base64 fallback.');
+const rawKey = process.env.CREDENTIAL_ENCRYPTION_KEY;
+if (!rawKey || rawKey.length !== 64) {
+  // Don't throw at module load — allow the server to start for non-source features
+  // But any encrypt/decrypt call will throw if key is missing
+  console.warn('WARNING: CREDENTIAL_ENCRYPTION_KEY not set or invalid. Source credential encryption will fail.');
 }
+const KEY = rawKey && rawKey.length === 64 ? Buffer.from(rawKey, 'hex') : null;
 
 export function encryptCredential(plaintext) {
-  if (!KEY) return Buffer.from(plaintext).toString('base64'); // fallback: base64 only (not secure)
+  if (!KEY) throw new Error('CREDENTIAL_ENCRYPTION_KEY must be a 64-char hex string. Generate with: openssl rand -hex 32');
   const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv('aes-256-gcm', KEY, iv);
   const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
@@ -18,8 +18,9 @@ export function encryptCredential(plaintext) {
 }
 
 export function decryptCredential(ciphertext) {
-  if (!KEY) return Buffer.from(ciphertext, 'base64').toString('utf8'); // fallback
+  if (!KEY) throw new Error('CREDENTIAL_ENCRYPTION_KEY must be a 64-char hex string. Cannot decrypt.');
   const data = Buffer.from(ciphertext, 'base64');
+  if (data.length < 28) throw new Error('Ciphertext too short');
   const iv = data.subarray(0, 12);
   const authTag = data.subarray(12, 28);
   const encrypted = data.subarray(28);

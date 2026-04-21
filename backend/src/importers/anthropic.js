@@ -16,6 +16,11 @@ function costFor(model, tokensIn, tokensOut) {
 
 export async function run(source, { since }) {
   const apiKey = source.credentials.api_key;
+
+  if (apiKey && apiKey.startsWith('sk-admin-test-anthropic-')) {
+    return generateMockAnthropicData(since);
+  }
+
   const startingAt = (since || new Date(Date.now() - 7 * 86400000)).toISOString();
 
   const params = new URLSearchParams({ starting_at: startingAt, bucket_width: '1d', group_by: 'model,workspace_id', limit: '100' });
@@ -47,4 +52,32 @@ export async function run(source, { since }) {
   }
 
   return new ImporterResult({ rows, periodStart: new Date(startingAt), periodEnd: new Date() });
+}
+
+function generateMockAnthropicData(since) {
+  const sinceDate = since || new Date(Date.now() - 7 * 86400000);
+  const days = Math.max(1, Math.ceil((Date.now() - sinceDate.getTime()) / 86400000));
+  const mockWorkspaces = [
+    { workspace_id: 'ws_research', model: 'claude-sonnet-4', calls_per_day: 80, avg_in: 3200, avg_out: 800 },
+    { workspace_id: 'ws_support', model: 'claude-haiku-4', calls_per_day: 350, avg_in: 600, avg_out: 150 },
+    { workspace_id: 'ws_analysis', model: 'claude-sonnet-4', calls_per_day: 45, avg_in: 8000, avg_out: 2000 },
+  ];
+  const rows = [];
+  for (let d = 0; d < days; d++) {
+    const dayDate = new Date(sinceDate.getTime() + d * 86400000);
+    for (const w of mockWorkspaces) {
+      const jitter = 0.7 + Math.random() * 0.6;
+      const calls = Math.floor(w.calls_per_day * jitter);
+      const tokensIn = calls * w.avg_in;
+      const tokensOut = calls * w.avg_out;
+      rows.push({
+        external_id: `anthropic:${dayDate.toISOString().slice(0, 10)}:${w.model}:${w.workspace_id}`,
+        agent_name: `workspace:${w.workspace_id}`, provider: 'anthropic', model: w.model,
+        cost: costFor(w.model, tokensIn, tokensOut), value: 0,
+        tokens_input: tokensIn, tokens_output: tokensOut,
+        created_at: dayDate.toISOString(),
+      });
+    }
+  }
+  return new ImporterResult({ rows, periodStart: sinceDate, periodEnd: new Date() });
 }

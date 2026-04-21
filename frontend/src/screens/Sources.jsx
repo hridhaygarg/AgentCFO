@@ -173,6 +173,7 @@ export default function Sources() {
                   <input type="password" value={formData.apiKey} onChange={e => setFormData({ ...formData, apiKey: e.target.value })} placeholder={p.placeholder}
                     style={{ width: '100%', padding: '10px 14px', background: '#0f0f0f', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '8px', color: 'white', fontSize: '14px', boxSizing: 'border-box' }} />
                   {p.helpUrl && <a href={p.helpUrl} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: '8px', fontSize: '12px', color: '#22c55e' }}>How do I get this key?</a>}
+                  <div style={{ marginTop: '8px', fontSize: '11px', color: 'rgba(255,255,255,0.38)' }}>Tip: prefix with <span className='mono'>sk-admin-test-</span> to demo with mock data (no real API call).</div>
                 </div>
               )}
 
