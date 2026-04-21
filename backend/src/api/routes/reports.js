@@ -89,11 +89,19 @@ function buildSummary(data) {
 function renderReportPdf(doc, data) {
   const M = 56, W = 500;
 
-  // Masthead
-  doc.moveTo(M, M).lineTo(M + W, M).lineWidth(0.75).strokeColor('#050505').stroke();
-  doc.fontSize(11).fillColor('#050505').font('Helvetica-Bold').text('layer', M, M + 14, { continued: true });
-  doc.fillColor('#22c55e').text('oi', { continued: false });
-  doc.fontSize(9).fillColor('#666').font('Courier').text(data.period.label.toUpperCase() + '  ·  REPORT', M, M + 16, { width: W, align: 'right' });
+  // Masthead — Stratified Spine mark + wordmark
+  doc.moveTo(M, M).lineTo(M + W, M).lineWidth(0.75).strokeColor('#0a0a0a').stroke();
+  // Draw mark
+  const ms = 0.85;
+  doc.save();
+  doc.roundedRect(M + 5*ms, M + 12 + 5*ms, 14*ms, 2*ms, 0.6*ms).fillColor('#888888').fillOpacity(0.5).fill();
+  doc.roundedRect(M + 5*ms, M + 12 + 8.5*ms, 19*ms, 2*ms, 0.6*ms).fillColor('#888888').fillOpacity(0.5).fill();
+  doc.roundedRect(M + 5*ms, M + 12 + 12*ms, 10*ms, 2*ms, 0.6*ms).fillColor('#888888').fillOpacity(0.5).fill();
+  doc.fillOpacity(1).roundedRect(M + 5*ms, M + 12 + 16*ms, 22*ms, 4*ms, 1*ms).fillColor('#22c55e').fill();
+  doc.roundedRect(M + 5*ms, M + 12 + 23*ms, 22*ms, 4*ms, 1*ms).fillColor('#888888').fillOpacity(0.4).fill();
+  doc.restore();
+  doc.fillOpacity(1).fontSize(16).fillColor('#0a0a0a').font('Helvetica-Bold').text('layeroi', M + 30, M + 16);
+  doc.fontSize(9).fillColor('#666').font('Courier').text(data.period.label.toUpperCase() + '  ·  REPORT', M, M + 18, { width: W, align: 'right' });
 
   // Title
   let y = M + 56;
@@ -210,11 +218,15 @@ router.post('/api/reports/email', async (req, res) => {
       from: 'layeroi <hello@layeroi.com>',
       to: email,
       subject: `Your ${data.period.label} AI agent P&L report`,
-      html: `<div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;padding:32px;">
-        <div style="margin-bottom:24px;font-weight:600;">layer<span style="color:#22c55e;">oi</span></div>
+      html: `<div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;">
+        <div style="background:#0a0a0a;padding:32px 24px;text-align:center;border-radius:14px 14px 0 0;">
+          <img src="https://layeroi.com/brand/layeroi-logo.svg" alt="layeroi" width="120" style="display:inline-block;max-width:120px;height:auto;">
+        </div>
+        <div style="padding:32px 24px;">
         <h1 style="font-family:Georgia,serif;font-style:italic;font-size:24px;margin:0 0 12px;">${data.period.label} Report</h1>
         <p style="color:#444;line-height:1.6;">${buildSummary(data)}</p>
         <p style="color:#444;">Full breakdown in the attached PDF.</p>
+        </div>
       </div>`,
       attachments: [{ filename: `layeroi-report-${data.period.label.replace(' ', '-')}.pdf`, content: pdfBuffer }],
     });

@@ -33,17 +33,7 @@ export function DashboardSidebar({ active, onNavigate, onUpgrade, onClose }) {
     }}>
       {/* Brand */}
       <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <svg width='22' height='22' viewBox='0 0 24 24' fill='none'>
-            <rect width='24' height='24' rx='5' fill='#22c55e'/>
-            <rect x='5' y='7' width='3' height='11' rx='1' fill='white'/>
-            <rect x='10.5' y='10' width='3' height='8' rx='1' fill='white' opacity='0.75'/>
-            <rect x='16' y='5' width='3' height='13' rx='1' fill='white' opacity='0.9'/>
-          </svg>
-          <span style={{ fontWeight: 600, fontSize: '15px', color: 'white', letterSpacing: '-0.01em' }}>
-            layer<span style={{ color: '#22c55e' }}>oi</span>
-          </span>
-        </div>
+        <img src='/brand/layeroi-logo.svg' alt='layeroi' style={{ height: '28px', width: 'auto', display: 'block' }} />
       </div>
 
       {/* Nav */}
