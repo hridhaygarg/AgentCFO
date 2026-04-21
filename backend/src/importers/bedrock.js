@@ -32,7 +32,7 @@ export async function run(source, { since }) {
       rows.push({
         external_id: `bedrock:${byTime.TimePeriod.Start}:${usageType}`,
         agent_name: `bedrock:${model}`, provider: 'bedrock', model,
-        cost, value: 0, tokens_input: 0, tokens_output: 0,
+        cost_usd: cost, value: 0, prompt_tokens: 0, completion_tokens: 0,
         created_at: new Date(byTime.TimePeriod.Start).toISOString(),
       });
     }

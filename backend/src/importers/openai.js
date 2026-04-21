@@ -56,8 +56,8 @@ export async function run(source, { since }) {
         external_id: `openai:${bucket.start_time}:${model}:${projectId}`,
         agent_name: `project:${projectId}`, // TODO: allow customer to rename agents
         provider: 'openai', model,
-        cost: costFor(model, tokensIn, tokensOut), value: 0,
-        tokens_input: tokensIn, tokens_output: tokensOut,
+        cost_usd: costFor(model, tokensIn, tokensOut), value: 0,
+        prompt_tokens: tokensIn, completion_tokens: tokensOut,
         created_at: new Date(bucket.start_time * 1000).toISOString(),
       });
     }
@@ -86,8 +86,8 @@ function generateMockOpenAIData(since) {
       rows.push({
         external_id: `openai:${bucketStart}:${a.model}:${a.project_id}`,
         agent_name: a.project_id, provider: 'openai', model: a.model,
-        cost: costFor(a.model, tokensIn, tokensOut), value: 0,
-        tokens_input: tokensIn, tokens_output: tokensOut,
+        cost_usd: costFor(a.model, tokensIn, tokensOut), value: 0,
+        prompt_tokens: tokensIn, completion_tokens: tokensOut,
         created_at: new Date(bucketStart * 1000).toISOString(),
       });
     }

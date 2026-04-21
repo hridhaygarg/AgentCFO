@@ -44,8 +44,8 @@ export async function run(source, { since }) {
         external_id: `anthropic:${bucket.starting_at}:${model}:${workspaceId}`,
         agent_name: `workspace:${workspaceId}`,
         provider: 'anthropic', model,
-        cost: costFor(model, tokensIn, tokensOut), value: 0,
-        tokens_input: tokensIn, tokens_output: tokensOut,
+        cost_usd: costFor(model, tokensIn, tokensOut), value: 0,
+        prompt_tokens: tokensIn, completion_tokens: tokensOut,
         created_at: bucket.starting_at,
       });
     }
@@ -73,8 +73,8 @@ function generateMockAnthropicData(since) {
       rows.push({
         external_id: `anthropic:${dayDate.toISOString().slice(0, 10)}:${w.model}:${w.workspace_id}`,
         agent_name: `workspace:${w.workspace_id}`, provider: 'anthropic', model: w.model,
-        cost: costFor(w.model, tokensIn, tokensOut), value: 0,
-        tokens_input: tokensIn, tokens_output: tokensOut,
+        cost_usd: costFor(w.model, tokensIn, tokensOut), value: 0,
+        prompt_tokens: tokensIn, completion_tokens: tokensOut,
         created_at: dayDate.toISOString(),
       });
     }
