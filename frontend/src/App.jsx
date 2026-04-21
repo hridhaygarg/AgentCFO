@@ -47,7 +47,12 @@ const colors = {
 };
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('overview')
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    const p = window.location.pathname.replace('/dashboard/', '').replace('/dashboard', '').replace('/', '');
+    const validScreens = ['overview', 'agents', 'budget', 'report', 'reports', 'outreach', 'onboarding', 'admin', 'sources'];
+    const screen = validScreens.includes(p) ? p : 'overview';
+    return screen === 'reports' ? 'report' : screen;
+  })
   const [isProxyActive, setIsProxyActive] = useState(false)
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -55,6 +60,9 @@ export default function App() {
 
   // Compute if this is a dashboard route
   const isDashboard = currentPath === '/dashboard' || currentPath.startsWith('/dashboard')
+    || currentPath === '/reports' || currentPath === '/sources' || currentPath === '/overview'
+    || currentPath === '/agents' || currentPath === '/budget' || currentPath === '/admin'
+    || currentPath === '/outreach' || currentPath === '/onboarding'
 
   const screenNames = {
     overview: 'Overview',
