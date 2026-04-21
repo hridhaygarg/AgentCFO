@@ -27,6 +27,9 @@ export async function syncSource(sourceId) {
 
   try {
     const credentials = JSON.parse(decryptCredential(source.credentials_encrypted));
+    console.log('[runner] decrypted credentials for source', source.id);
+    console.log('[runner] decrypted credential keys:', Object.keys(credentials));
+    console.log('[runner] api_key first 20 chars:', credentials.api_key?.slice(0, 20));
     const since = source.last_synced_at ? new Date(source.last_synced_at) : new Date(Date.now() - 30 * 86400000);
 
     const result = await importer.run({ ...source, credentials }, { since });

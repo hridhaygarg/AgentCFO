@@ -15,12 +15,20 @@ function costFor(model, tokensIn, tokensOut) {
 }
 
 export async function run(source, { since }) {
+  console.log('[openai-importer] run() called');
+  console.log('[openai-importer] source.credentials type:', typeof source.credentials);
+  console.log('[openai-importer] source.credentials keys:', source.credentials ? Object.keys(source.credentials) : 'null');
+  console.log('[openai-importer] api_key prefix (first 20 chars):', source.credentials?.api_key?.slice(0, 20));
+  console.log('[openai-importer] api_key starts with sk-admin-test-:', source.credentials?.api_key?.startsWith?.('sk-admin-test-'));
+
   const apiKey = source.credentials.api_key;
 
   // Test mode: mock data for pipeline verification
   if (apiKey && apiKey.startsWith('sk-admin-test-')) {
+    console.log('[openai-importer] TEST MODE TRIGGERED - returning mock data');
     return generateMockOpenAIData(since);
   }
+  console.log('[openai-importer] TEST MODE NOT TRIGGERED - calling real OpenAI API');
 
   const sinceUnix = Math.floor((since || new Date(Date.now() - 7 * 86400000)).getTime() / 1000);
 
