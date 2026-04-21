@@ -24,6 +24,11 @@ function costFor(model, tokensIn, tokensOut) {
 }
 
 export async function run(source, { since }) {
+  console.log('[openai-importer] ENTRY: run() called for source', source.id);
+  console.log('[openai-importer] has credentials:', !!source.credentials, 'has api_key:', !!source.credentials?.api_key);
+  console.log('[openai-importer] api_key prefix:', source.credentials?.api_key?.slice(0, 20));
+  console.log('[openai-importer] since param:', since);
+
   const apiKey = source.credentials.api_key;
 
   // 30 days ago at midnight UTC
@@ -32,6 +37,8 @@ export async function run(source, { since }) {
   maxSince.setUTCHours(0, 0, 0, 0);
   const sinceDate = since && since > maxSince ? since : maxSince;
   const sinceUnix = Math.floor(sinceDate.getTime() / 1000);
+
+  console.log('[openai-importer] sinceDate:', sinceDate.toISOString(), 'sinceUnix:', sinceUnix);
 
   const rows = [];
   let cursor = null;
@@ -46,12 +53,19 @@ export async function run(source, { since }) {
     });
     if (cursor) params.set('page', cursor);
 
+    console.log('[openai-importer] ABOUT TO FETCH: page', pages, 'URL:', OPENAI_USAGE_URL, 'params:', params.toString());
+
     const res = await fetch(`${OPENAI_USAGE_URL}?${params}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
     const body = await res.text();
+
+    console.log('[openai-importer] FETCH COMPLETE: status=', res.status, 'bodyLength=', body.length);
+
     if (!res.ok) throw new Error(`OpenAI usage API ${res.status}: ${body.slice(0, 300)}`);
     const data = JSON.parse(body);
+
+    console.log('[openai-importer] has_more=', data.has_more, 'buckets=', data.data?.length);
 
     for (const bucket of data.data || []) {
       for (const result of bucket.results || []) {
@@ -74,10 +88,13 @@ export async function run(source, { since }) {
       }
     }
 
+    console.log('[openai-importer] rows so far:', rows.length);
+
     if (!data.has_more) break;
     cursor = data.next_page;
     pages++;
   }
 
+  console.log('[openai-importer] EXIT: returning', rows.length, 'rows');
   return new ImporterResult({ rows, periodStart: sinceDate, periodEnd: new Date() });
 }
