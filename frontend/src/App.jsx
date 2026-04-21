@@ -64,6 +64,7 @@ export default function App() {
     onboarding: 'Onboarding',
     outreach: 'Outreach',
     admin: 'Admin',
+    sources: 'Sources',
   }
 
   // Set page title based on current screen
@@ -206,6 +207,7 @@ const DashScreens = {
   onboarding: lazy(() => import('./screens/Onboarding')),
   outreach: lazy(() => import('./screens/Outreach')),
   admin: lazy(() => import('./screens/Admin')),
+  sources: lazy(() => import('./screens/Sources')),
 };
 
 function DarkDashboard({ currentScreen, setCurrentScreen, screenNames, isMobile }) {

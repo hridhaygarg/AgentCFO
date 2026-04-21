@@ -4,6 +4,7 @@ const MAIN_NAV = [
   { icon: 'overview', label: 'Overview', id: 'overview' },
   { icon: 'agents', label: 'Agents', id: 'agents' },
   { icon: 'budget', label: 'Budget', id: 'budget' },
+  { icon: 'integrations', label: 'Sources', id: 'sources' },
   { icon: 'reports', label: 'Reports', id: 'report' },
 ];
 
