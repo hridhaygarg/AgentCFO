@@ -89,7 +89,10 @@ router.post('/auth/signup', async (req, res) => {
       // Ignore — table might not exist yet
     }
 
-    const apiKey = `sk-${crypto.randomBytes(16).toString('hex')}`;
+    const apiKey = `sk-layeroi-${crypto.randomBytes(16).toString('hex')}`;
+    // Persist API key on the org for SDK auth
+    await supabase.from('organisations').update({ api_key: apiKey }).eq('id', org.id);
+
     const token = signJWT({ userId: user.id, orgId: org.id, email: cleanEmail, isSuperadmin: user.is_superadmin || false });
 
     logger.info('New user signed up', { email: cleanEmail, orgId: org.id });

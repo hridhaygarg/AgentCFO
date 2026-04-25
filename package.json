@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "AI agent financial control layer",
   "type": "module",
+  "workspaces": ["backend", "frontend", "packages/*"],
   "scripts": {
     "start": "bash start.sh"
   },

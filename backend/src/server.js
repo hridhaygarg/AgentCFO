@@ -32,6 +32,7 @@ import paymentsRoutes from './api/routes/payments.js';
 import workspaceRoutes from './api/routes/workspace.js';
 import reportsRoutes from './api/routes/reports.js';
 import sourcesRoutes from './api/routes/sources.js';
+import ingestRoutes from './api/routes/ingest.js';
 
 dotenv.config();
 
@@ -90,6 +91,7 @@ app.use('/payments', paymentsRoutes);
 app.use(workspaceRoutes);
 app.use(reportsRoutes);
 app.use(sourcesRoutes);
+app.use(ingestRoutes);
 
 // Metrics endpoint
 app.get('/api/metrics/weekly', async (req, res) => {
