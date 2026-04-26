@@ -13,7 +13,8 @@ export function ThemeToggle({ compact }) {
     <div style={{
       display: 'inline-flex',
       borderRadius: '8px',
-      border: `1px solid ${colors.borderDefault}`,
+      border: `1px solid ${colors.borderHover}`,
+      background: colors.bgTertiary,
       overflow: 'hidden',
     }}>
       {modes.map(m => (
@@ -24,9 +25,9 @@ export function ThemeToggle({ compact }) {
           style={{
             padding: compact ? '4px 8px' : '5px 12px',
             background: mode === m.id ? colors.accentGreenSubtle : 'transparent',
-            color: mode === m.id ? colors.accentGreen : colors.textMuted,
+            color: mode === m.id ? colors.accentGreen : colors.textSecondary,
             border: 'none',
-            borderRight: m.id !== 'auto' ? `1px solid ${colors.borderDefault}` : 'none',
+            borderRight: m.id !== 'auto' ? `1px solid ${colors.borderHover}` : 'none',
             cursor: 'pointer',
             fontSize: compact ? '12px' : '14px',
             fontWeight: mode === m.id ? 600 : 400,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../styles/designSystem.css';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export default function Landing() {
   return (
@@ -87,6 +88,7 @@ function Navigation() {
             <a href="/login" className="nav-signin-link" style={{ color: 'var(--white-70)', textDecoration: 'none', fontSize: '13px', fontWeight: 500 }}>
               Sign in
             </a>
+            <ThemeToggle compact />
             <a href="/signup" className="btn-primary" style={{ padding: '8px 14px', fontSize: '13px' }}>
               Start free →
             </a>

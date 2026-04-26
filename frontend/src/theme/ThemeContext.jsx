@@ -5,7 +5,7 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [mode, setMode] = useState(() =>
-    localStorage.getItem('layeroi-theme-mode') || 'auto'
+    localStorage.getItem('layeroi-theme-mode') || 'dark'
   );
 
   const [resolved, setResolved] = useState('dark');
