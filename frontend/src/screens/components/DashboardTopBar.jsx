@@ -25,7 +25,7 @@ export function DashboardTopBar({ onToggleSidebar, screenName }) {
   return (
     <header style={{
       height: '52px',
-      background: 'rgba(10, 10, 10, 0.72)',
+      background: 'var(--nav-bg)',
       backdropFilter: 'saturate(180%) blur(16px)',
       WebkitBackdropFilter: 'saturate(180%) blur(16px)',
       borderBottom: '1px solid var(--border-subtle)',

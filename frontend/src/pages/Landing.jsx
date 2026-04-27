@@ -105,7 +105,7 @@ function Navigation() {
       {menuOpen && (
         <div style={{
           position: 'fixed', inset: 0, zIndex: 99,
-          background: 'rgba(5,5,5,0.96)',
+          background: 'var(--mobile-menu-bg)',
           backdropFilter: 'blur(20px)',
           paddingTop: '80px',
           animation: 'fadeIn 200ms ease',
@@ -133,7 +133,7 @@ function Navigation() {
             ))}
             <a href="/signup" onClick={() => setMenuOpen(false)} style={{
               display: 'block', marginTop: '32px',
-              background: '#22c55e', color: '#050505',
+              background: '#22c55e', color: 'var(--btn-primary-text)',
               padding: '16px', textAlign: 'center',
               borderRadius: '8px', fontSize: '15px',
               fontWeight: 600, textDecoration: 'none',
@@ -214,7 +214,7 @@ function Hero() {
           animation: 'fadeUp 700ms var(--ease-out) 250ms both',
         }}>
           <pre style={{
-            background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--code-bg)', border: '1px solid var(--code-border)',
             borderRadius: '10px', padding: '16px 20px', fontSize: '13px',
             fontFamily: 'JetBrains Mono, IBM Plex Mono, monospace', color: 'var(--white-70)',
             lineHeight: 1.7, overflowX: 'auto', margin: 0,
@@ -285,7 +285,7 @@ function HeroDashboardDesktop() {
   return (
     <div style={{
       position: 'relative',
-      background: 'linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%)',
+      background: 'var(--hero-gradient)',
       border: '1px solid var(--border-default)',
       borderRadius: '16px',
       overflow: 'hidden',
@@ -420,7 +420,7 @@ function HeroDashboardDesktop() {
 function HeroDashboardMobile() {
   return (
     <div style={{
-      background: 'linear-gradient(180deg, #0f0f0f, #0a0a0a)',
+      background: 'var(--hero-gradient)',
       border: '1px solid var(--border-default)',
       borderRadius: '12px',
       overflow: 'hidden',
@@ -664,7 +664,7 @@ function StepCard({ number, title, description, code, visual }) {
       <p style={{ fontSize: '14px', color: 'var(--white-50)', lineHeight: 1.5, marginBottom: '24px' }}>{description}</p>
       {code && (
         <div style={{
-          background: '#050505', border: '1px solid var(--border-subtle)',
+          background: 'var(--card-bg)', border: '1px solid var(--border-default)',
           borderRadius: '8px', padding: '16px',
           fontFamily: 'JetBrains Mono', fontSize: '11.5px',
           color: 'var(--white-70)', lineHeight: 1.7,
@@ -701,7 +701,7 @@ function FlowDiagram() {
 
 function MiniDashboardVisual() {
   return (
-    <div style={{ background: '#050505', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '16px', marginTop: '0' }}>
+    <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-default)', borderRadius: '8px', padding: '16px', marginTop: '0' }}>
       {[
         { name: 'sales-agent', roi: '7.0×', color: 'var(--green)', w: '85%' },
         { name: 'support-agent', roi: '5.0×', color: 'var(--green)', w: '70%' },
@@ -1057,7 +1057,7 @@ function Pricing() {
               {p.highlighted && (
                 <div style={{
                   position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
-                  background: '#22c55e', color: '#050505',
+                  background: '#22c55e', color: 'var(--btn-primary-text)',
                   fontSize: '10px', fontWeight: 700, fontFamily: 'JetBrains Mono',
                   padding: '4px 12px', borderRadius: '100px', letterSpacing: '0.08em',
                 }}>MOST POPULAR</div>

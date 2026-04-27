@@ -81,6 +81,22 @@
   --shadow-card-hover: 0 1px 0 rgba(255,255,255,0.06) inset, 0 0 0 1px var(--border-default), 0 8px 32px rgba(0,0,0,0.4);
   --shadow-raised: 0 0 0 1px var(--border-subtle), 0 20px 60px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
   --glow-green: 0 0 0 1px var(--green-border), 0 0 40px rgba(34,197,94,0.15);
+
+  /* Contextual — dark mode defaults */
+  --nav-bg: rgba(5,5,5,0.72);
+  --mobile-menu-bg: rgba(5,5,5,0.96);
+  --code-bg: rgba(0,0,0,0.4);
+  --code-border: rgba(255,255,255,0.06);
+  --hero-gradient: linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
+  --card-bg: #0f0f0f;
+  --btn-primary-text: #050505;
+  --quote-bg: rgba(34,197,94,0.04);
+  --quote-border: rgba(34,197,94,0.18);
+  --table-alt-bg: rgba(255,255,255,0.02);
+  --status-profit-bg: rgba(34,197,94,0.08);
+  --status-loss-bg: rgba(239,68,68,0.08);
+  --status-warn-bg: rgba(245,158,11,0.08);
+  --focus-ring: 0 0 0 3px rgba(34,197,94,0.3);
 }
 
 /* ═══ LIGHT THEME OVERRIDES ═══ */
@@ -121,10 +137,26 @@
   --info: #2563eb;
 
   /* Effects — light-appropriate shadows */
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px var(--border-subtle);
-  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.08), 0 0 0 1px var(--border-default);
-  --shadow-raised: 0 0 0 1px var(--border-subtle), 0 12px 40px rgba(0,0,0,0.12);
-  --glow-green: 0 0 0 1px var(--green-border), 0 0 30px rgba(22,163,74,0.1);
+  --shadow-card: 0 1px 3px rgba(15,23,42,0.06), 0 0 0 1px var(--border-subtle);
+  --shadow-card-hover: 0 4px 12px rgba(15,23,42,0.10), 0 0 0 1px var(--border-default);
+  --shadow-raised: 0 0 0 1px var(--border-subtle), 0 12px 40px rgba(15,23,42,0.08);
+  --glow-green: 0 0 0 1px var(--green-border), 0 0 30px rgba(22,163,74,0.08);
+
+  /* Contextual — light mode overrides */
+  --nav-bg: rgba(255,255,255,0.85);
+  --mobile-menu-bg: rgba(255,255,255,0.98);
+  --code-bg: #f4f4f5;
+  --code-border: rgba(15,23,42,0.10);
+  --hero-gradient: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  --card-bg: #ffffff;
+  --btn-primary-text: #ffffff;
+  --quote-bg: rgba(22,163,74,0.04);
+  --quote-border: rgba(22,163,74,0.16);
+  --table-alt-bg: rgba(0,0,0,0.02);
+  --status-profit-bg: rgba(22,163,74,0.06);
+  --status-loss-bg: rgba(220,38,38,0.06);
+  --status-warn-bg: rgba(217,119,6,0.06);
+  --focus-ring: 0 0 0 3px rgba(22,163,74,0.2);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
