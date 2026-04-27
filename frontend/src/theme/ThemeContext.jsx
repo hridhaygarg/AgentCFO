@@ -11,17 +11,17 @@ export function ThemeProvider({ children }) {
   const [resolved, setResolved] = useState('dark');
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: light)');
-    const compute = () => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const update = () => {
       if (mode === 'auto') {
-        setResolved(mq.matches ? 'light' : 'dark');
+        setResolved(mq.matches ? 'dark' : 'light');
       } else {
         setResolved(mode);
       }
     };
-    compute();
-    mq.addEventListener('change', compute);
-    return () => mq.removeEventListener('change', compute);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
   }, [mode]);
 
   useEffect(() => {

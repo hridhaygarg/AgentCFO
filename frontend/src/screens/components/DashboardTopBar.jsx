@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Icon } from './Icon';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 export function DashboardTopBar({ onToggleSidebar, screenName }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,6 +50,8 @@ export function DashboardTopBar({ onToggleSidebar, screenName }) {
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', animation: 'pulse-dot 2.4s ease-in-out infinite' }}/>
           <span className='mono' style={{ fontSize: '10px', color: 'var(--white-38)', letterSpacing: '0.08em' }}>LIVE</span>
         </div>
+
+        <ThemeToggle compact />
 
         <div style={{ position: 'relative' }} ref={menuRef}>
           <button onClick={() => setMenuOpen(o => !o)} style={{

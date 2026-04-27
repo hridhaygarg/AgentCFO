@@ -1,5 +1,4 @@
 import { Icon } from './Icon';
-import { ThemeToggle } from '../../components/ThemeToggle';
 
 const MAIN_NAV = [
   { icon: 'overview', label: 'Overview', id: 'overview' },
@@ -99,11 +98,6 @@ export function DashboardSidebar({ active, onNavigate, onUpgrade, onClose }) {
           </button>
         ))}
       </nav>
-
-      {/* Theme toggle */}
-      <div style={{ padding: '8px 16px 0', display: 'flex', justifyContent: 'center' }}>
-        <ThemeToggle compact />
-      </div>
 
       {/* Plan card */}
       <div style={{ padding: '16px', borderTop: '1px solid var(--border-subtle)' }}>
