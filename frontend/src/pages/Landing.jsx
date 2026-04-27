@@ -190,19 +190,20 @@ function Hero() {
 
         <h1 className="serif" style={{
           fontSize: 'var(--type-display-lg)',
-          color: 'var(--white)', lineHeight: 1.05, maxWidth: '880px',
+          color: 'var(--white)', lineHeight: 1.05, maxWidth: '720px',
+          letterSpacing: '-0.02em',
           animation: 'fadeUp 700ms var(--ease-out) 100ms both',
         }}>
           Every observability tool speaks engineer.
           <br/>
           <span style={{ color: 'var(--white-35)' }}>Only </span>
-          <span style={{ color: 'var(--green)' }}>layeroi</span>
+          <span className="hero-glow" style={{ color: 'var(--green)' }}>layeroi</span>
           <span style={{ color: 'var(--white-35)' }}> speaks CFO.</span>
         </h1>
 
         <p style={{
           fontSize: 'var(--type-body-lg)', color: 'var(--white-50)',
-          lineHeight: 1.55, maxWidth: '580px', marginTop: '28px',
+          lineHeight: 1.6, maxWidth: '540px', marginTop: '28px',
           animation: 'fadeUp 700ms var(--ease-out) 200ms both',
         }}>
           Know which AI agents make you money — before your CFO asks.
